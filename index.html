@@ -2,367 +2,649 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Radio Streaming & Live Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Creative Radio 450 - 144.500 MHz</title>
   <style>
     :root {
-      --bg: #0f172a;
-      --card: #1e293b;
+      --bg: #090d16;
+      --card: rgba(22, 30, 49, 0.7);
+      --card-border: rgba(56, 189, 248, 0.2);
       --primary: #38bdf8;
-      --primary-hover: #0284c7;
+      --accent: #8b5cf6;
+      --accent-glow: rgba(139, 92, 246, 0.4);
       --text: #f8fafc;
       --muted: #94a3b8;
-      --error: #ef4444;
       --like: #f43f5e;
+      --neon-cyan: #06b6d4;
     }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, sans-serif;
+    
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
     }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-      min-height: 100vh;
+    
+    body { 
+      background-color: var(--bg); 
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.12) 0px, transparent 50%);
+      color: var(--text); 
+      display: flex; 
+      justify-content: center; 
+      padding: 16px 12px; 
+      min-height: 100vh; 
     }
-
-    .container {
-      width: 100%;
-      max-width: 600px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+    
+    .container { 
+      width: 100%; 
+      max-width: 480px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 18px; 
     }
-
-    /* Player Card */
-    .player-card {
+    
+    /* MODERN PLAYER CARD STYLING */
+    .modern-player-card { 
       background: var(--card);
-      padding: 24px;
-      border-radius: 16px;
-      text-align: center;
-      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      padding: 24px 20px; 
+      border-radius: 24px; 
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1);
       display: flex;
       flex-direction: column;
       align-items: center;
-    }
-
-    .album-art-container {
-      width: 140px;
-      height: 140px;
-      margin-bottom: 16px;
-      border-radius: 12px;
+      gap: 16px;
+      position: relative;
       overflow: hidden;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.4);
-      background: #000;
     }
 
-    .album-art {
+    .modern-player-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .station-header {
+      text-align: center;
       width: 100%;
-      height: 100%;
-      object-fit: cover;
     }
 
-    .station-title {
-      font-size: 1.5rem;
-      margin-bottom: 4px;
-    }
-
-    .now-playing {
+    .station-badge {
+      background: rgba(56, 189, 248, 0.1);
       color: var(--primary);
-      font-size: 0.9rem;
-      font-weight: 500;
-      margin-bottom: 12px;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 1px;
+      display: inline-block;
+      margin-bottom: 8px;
     }
 
-    .station-status {
-      color: #4ade80;
-      font-size: 0.8rem;
-      margin-bottom: 18px;
+    .station-title { 
+      font-size: 1.5rem; 
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 2px;
+    }
+
+    .station-freq {
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 500;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
-      background: rgba(74, 222, 128, 0.1);
-      padding: 4px 12px;
-      border-radius: 20px;
     }
 
-    .status-dot {
-      width: 8px;
-      height: 8px;
-      background-color: #4ade80;
+    .freq-highlight {
+      color: var(--neon-cyan);
+      font-weight: 700;
+      font-family: monospace;
+      font-size: 0.95rem;
+    }
+
+    /* MODERN DISPLAY & VISUALIZER CANVAS */
+    .display-screen {
+      width: 100%;
+      background: rgba(10, 15, 29, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 12px;
+      box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .screen-top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-family: monospace;
+    }
+
+    .live-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #34d399;
+      font-weight: 700;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      background: #34d399;
       border-radius: 50%;
+      box-shadow: 0 0 8px #34d399;
       animation: pulse 1.5s infinite;
     }
 
     @keyframes pulse {
-      0% { opacity: 1; }
-      50% { opacity: 0.3; }
-      100% { opacity: 1; }
+      0% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+      100% { opacity: 1; transform: scale(1); }
     }
 
-    audio {
+    canvas#spectrumCanvas {
       width: 100%;
+      height: 75px;
       border-radius: 8px;
-      outline: none;
+      background: rgba(5, 8, 16, 0.6);
     }
 
-    /* Comments Section */
-    .comments-card {
+    /* CONTROLS AREA */
+    .player-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .play-btn-modern {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+      color: #ffffff;
+      border: none;
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      font-size: 1.4rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 8px 20px var(--accent-glow);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .play-btn-modern:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 25px var(--accent-glow);
+    }
+
+    .play-btn-modern:active {
+      transform: scale(0.95);
+    }
+
+    /* COMMENT CARD STYLING */
+    .comments-card { 
       background: var(--card);
-      padding: 24px;
-      border-radius: 16px;
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--card-border);
+      padding: 18px 16px; 
+      border-radius: 20px; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 14px; 
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+    
+    .comments-header {
       display: flex;
-      flex-direction: column;
-      gap: 16px;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      padding-bottom: 12px;
     }
 
-    .comment-form {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    .comments-header h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
     }
 
-    .form-row {
-      display: flex;
-      gap: 10px;
+    .btn-open-popup {
+      background: linear-gradient(135deg, var(--primary), #0284c7);
+      color: #0f172a;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+      transition: transform 0.2s;
     }
 
-    .form-row input {
-      flex: 1;
+    .btn-open-popup:active {
+      transform: scale(0.95);
     }
 
-    input, textarea {
-      background: var(--bg);
-      border: 1px solid #334155;
-      color: var(--text);
-      padding: 12px;
-      border-radius: 8px;
-      font-size: 0.95rem;
+    /* POPUP MODAL STYLES */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
+      height: 100%;
+      background: rgba(9, 13, 22, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s ease-in-out;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-content {
+      background: #111827;
+      width: 100%;
+      max-width: 420px;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      position: relative;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transform: translateY(15px);
+      transition: transform 0.25s ease-in-out;
+    }
+
+    .modal-overlay.active .modal-content {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-header h3 {
+      font-size: 1.1rem;
+      color: var(--text);
+    }
+
+    .btn-close {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 1.5rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .comment-form { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 12px; 
+    }
+    
+    .form-row { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 10px; 
+    }
+
+    @media (min-width: 480px) {
+      .form-row { flex-direction: row; }
+      .form-row input { flex: 1; }
+    }
+    
+    input, textarea { 
+      background: rgba(17, 24, 39, 0.8); 
+      border: 1px solid rgba(255, 255, 255, 0.1); 
+      color: var(--text); 
+      padding: 10px 12px; 
+      border-radius: 10px; 
+      font-size: 0.9rem; 
+      width: 100%; 
+      transition: border-color 0.2s;
     }
 
     input:focus, textarea:focus {
-      outline: 2px solid var(--primary);
-      border-color: transparent;
+      outline: none;
+      border-color: var(--primary);
     }
 
-    .captcha-box {
-      background: var(--bg);
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px dashed #334155;
-      display: flex;
-      align-items: center;
-      gap: 12px;
+    .captcha-box { 
+      background: rgba(17, 24, 39, 0.8); 
+      padding: 10px 12px; 
+      border-radius: 10px; 
+      border: 1px dashed rgba(255, 255, 255, 0.15); 
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
     }
 
     .captcha-label {
       font-weight: 600;
       color: var(--primary);
-      white-space: nowrap;
-      user-select: none;
+      font-size: 0.85rem;
     }
 
-    .captcha-box input {
-      max-width: 100px;
-      text-align: center;
+    button.btn-submit { 
+      background: linear-gradient(135deg, var(--primary), #0284c7); 
+      color: #0f172a; 
+      font-weight: 700; 
+      border: none; 
+      padding: 12px; 
+      border-radius: 10px; 
+      cursor: pointer; 
+      font-size: 0.95rem;
     }
 
-    button.btn-submit {
-      background: var(--primary);
-      color: #0f172a;
+    /* LIST KOMENTAR */
+    .comments-list { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 10px; 
+    }
+    
+    .comment-item { 
+      background: rgba(15, 23, 42, 0.6); 
+      padding: 12px 14px; 
+      border-radius: 12px; 
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-left: 3px solid var(--primary); 
+    }
+    
+    .comment-header { 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center;
+      font-size: 0.8rem; 
+      margin-bottom: 6px; 
+    }
+    
+    .comment-author { 
+      font-weight: 700; 
+      color: var(--primary); 
+    }
+    
+    .user-badge { 
+      background: rgba(51, 65, 85, 0.8); 
+      color: var(--muted); 
+      font-size: 0.65rem; 
+      padding: 2px 6px; 
+      border-radius: 4px; 
+      font-family: monospace;
+      margin-left: 4px;
+    }
+    
+    .comment-time { 
+      color: var(--muted); 
+      font-size: 0.7rem; 
+    }
+    
+    .comment-body { 
+      font-size: 0.88rem; 
+      word-break: break-word; 
+      margin-bottom: 8px; 
+      line-height: 1.4;
+      color: #e2e8f0;
+    }
+    
+    .like-btn { 
+      background: transparent; 
+      border: 1px solid rgba(255, 255, 255, 0.1); 
+      color: var(--muted); 
+      padding: 4px 10px; 
+      border-radius: 20px; 
+      font-size: 0.75rem; 
+      cursor: pointer; 
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+    
+    .like-btn.liked { 
+      background: rgba(244, 63, 94, 0.15); 
+      border-color: var(--like); 
+      color: var(--like); 
+    }
+
+    .btn-more {
+      background: transparent;
+      border: 1px solid var(--card-border);
+      color: var(--primary);
+      padding: 10px;
+      border-radius: 10px;
       font-weight: 600;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
+      font-size: 0.85rem;
       cursor: pointer;
+      width: 100%;
       transition: background 0.2s;
     }
 
-    button.btn-submit:hover {
-      background: var(--primary-hover);
-    }
-
-    button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-
-    .comments-list {
-      max-height: 380px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding-right: 4px;
-    }
-
-    .comment-item {
-      background: var(--bg);
-      padding: 12px 16px;
-      border-radius: 8px;
-      border-left: 3px solid var(--primary);
-    }
-
-    .comment-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.85rem;
-      margin-bottom: 6px;
-    }
-
-    .author-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .comment-author {
-      font-weight: 600;
-      color: var(--primary);
-    }
-
-    .user-badge {
-      background: #334155;
-      color: var(--muted);
-      font-size: 0.7rem;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-family: monospace;
-      font-weight: bold;
-    }
-
-    .comment-time {
-      color: var(--muted);
-      font-size: 0.75rem;
-    }
-
-    .comment-body {
-      font-size: 0.95rem;
-      word-break: break-word;
-      margin-bottom: 8px;
-    }
-
-    .comment-footer {
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .like-btn {
-      background: transparent;
-      border: 1px solid #334155;
-      color: var(--muted);
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.2s ease;
-    }
-
-    .like-btn:hover {
-      border-color: var(--like);
-      color: var(--like);
-    }
-
-    .like-btn.liked {
-      background: rgba(244, 63, 94, 0.15);
-      border-color: var(--like);
-      color: var(--like);
-    }
-
-    @media (max-width: 480px) {
-      .form-row {
-        flex-direction: column;
-      }
-      .captcha-box {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .captcha-box input {
-        max-width: 100%;
-      }
+    .btn-more:hover {
+      background: rgba(56, 189, 248, 0.08);
     }
   </style>
 </head>
 <body>
-
   <div class="container">
-    <!-- Radio Player -->
-    <div class="player-card">
-      <!-- Fitur Album Art / Logo Stasiun -->
-      <div class="album-art-container">
-        <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&auto=format&fit=crop&q=80" alt="Album Art" class="album-art" id="albumArt">
+    
+    <!-- PLAYER RADIO MODERN -->
+    <div class="modern-player-card">
+      <div class="station-header">
+        <span class="station-badge">LIVE BROADCAST</span>
+        <h1 class="station-title">Creative Radio 450</h1>
+        <div class="station-freq">
+          <span>Freq:</span>
+          <span class="freq-highlight">144.500 MHz</span>
+        </div>
+      </div>
+      
+      <!-- Layar Display Visualizer & Status -->
+      <div class="display-screen">
+        <div class="screen-top-bar">
+          <div class="live-status">
+            <span class="pulse-dot"></span>
+            <span id="lcdStatus">READY</span>
+          </div>
+          <span>AUDIO VISUALIZER</span>
+        </div>
+        <canvas id="spectrumCanvas"></canvas>
       </div>
 
-      <!-- Fitur Nama Stasiun & Program -->
-      <h1 class="station-title" id="stationName">Indie Beats FM</h1>
-      <p class="now-playing" id="nowPlaying">Playing: Non-Stop Hits & Chill Beats</p>
-
-      <div class="station-status">
-        <span class="status-dot"></span>
-        <span>LIVE STREAMING</span>
+      <!-- Tombol Kontrol Utama -->
+      <div class="player-controls">
+        <button class="play-btn-modern" id="playBtn" onclick="togglePlay()">▶</button>
       </div>
-
-      <audio autoplay="autoplay" controls preload="none">
-        <source src="https://radio.pelajarjurnalis.or.id/radio/;" type="audio/mpeg">
-        Browser Anda tidak mendukung elemen audio.
-      </audio>
     </div>
 
-    <!-- Live Comments -->
+    <!-- Audio Element -->
+    <audio id="radioPlayer" crossorigin="anonymous" autoplay preload="auto">
+      <source src="https://radio.pelajarjurnalis.or.id/radio/" type="audio/mpeg">
+    </audio>
+
+    <!-- AREA KOMENTAR -->
     <div class="comments-card">
-      <h2>Komentar Interaktif</h2>
+      <div class="comments-header">
+        <h2>Komentar Pendengar</h2>
+        <button class="btn-open-popup" onclick="openModal()">✍️ Tulis Pesan</button>
+      </div>
+
+      <div class="comments-list" id="commentsList"></div>
+      
+      <button id="btnLoadMore" class="btn-more" style="display: none;" onclick="loadMoreComments()">Tampilkan Komentar Lainnya</button>
+    </div>
+  </div>
+
+  <!-- POPUP MODAL FORM KOMENTAR -->
+  <div class="modal-overlay" id="commentModal" onclick="closeModalOnOverlay(event)">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Tulis Pesan Anda</h3>
+        <button class="btn-close" onclick="closeModal()">&times;</button>
+      </div>
       
       <form class="comment-form" id="commentForm">
         <div class="form-row">
           <input type="text" id="namaInput" placeholder="Nama Anda" required>
-          <input type="email" id="emailInput" placeholder="Email (Privat & Unik)" required>
+          <input type="email" id="emailInput" placeholder="Email (Privat)" required>
         </div>
-        <textarea id="pesanInput" rows="3" placeholder="Tulis pesan..." required></textarea>
-        
-        <!-- Box Captcha Matematika -->
+        <textarea id="pesanInput" rows="3" placeholder="Tulis komentar atau salam..." required></textarea>
         <div class="captcha-box">
           <span class="captcha-label" id="captchaQuestion">Berapa 0 + 0?</span>
-          <input type="number" id="captchaInput" placeholder="Hasil?" required>
+          <input type="number" id="captchaInput" placeholder="Hasil?" required style="width: 80px; text-align: center;">
         </div>
-
         <button type="submit" class="btn-submit" id="submitBtn">Kirim Komentar</button>
       </form>
-
-      <div class="comments-list" id="commentsList">
-        <p style="text-align: center; color: var(--muted);">Memuat komentar...</p>
-      </div>
     </div>
   </div>
 
   <script>
-    // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DI SINI
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzoI3m5EAcayQptkr5N4ljxgMNrD_ifD-nF_tNPvA2M7RFkS2l4GXZ85D-wMvYgFjWn/exec';
-
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzoI3m5EAcayQptkr5N4ljxgMNrD_ifD-nF_tNPvA2M7RFkS2l4GXZ85D-wMvYgFjWn/exec'; // Ganti dengan Web App URL milik Anda
     const commentForm = document.getElementById('commentForm');
     const namaInput = document.getElementById('namaInput');
     const emailInput = document.getElementById('emailInput');
     const pesanInput = document.getElementById('pesanInput');
     const submitBtn = document.getElementById('submitBtn');
     const commentsList = document.getElementById('commentsList');
-
+    const btnLoadMore = document.getElementById('btnLoadMore');
     const captchaQuestion = document.getElementById('captchaQuestion');
     const captchaInput = document.getElementById('captchaInput');
-    let captchaAnswer = 0;
+    const commentModal = document.getElementById('commentModal');
 
-    // Cache daftar komentar lokal & liked list
+    // AUDIO & VISUALIZER SPECTRUM
+    const radioPlayer = document.getElementById('radioPlayer');
+    const playBtn = document.getElementById('playBtn');
+    const lcdStatus = document.getElementById('lcdStatus');
+    const canvas = document.getElementById('spectrumCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let audioCtx, analyser, source;
+    let isInitialized = false;
+
+    // Autoplay Listener
+    window.addEventListener('DOMContentLoaded', () => {
+      radioPlayer.play().then(() => {
+        playBtn.innerText = '⏸';
+        lcdStatus.innerText = 'STREAMING';
+      }).catch(() => {
+        lcdStatus.innerText = 'PAUSED';
+      });
+    });
+
+    function initAudio() {
+      if (isInitialized) return;
+      try {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        analyser = audioCtx.createAnalyser();
+        source = audioCtx.createMediaElementSource(radioPlayer);
+        
+        source.connect(analyser);
+        analyser.connect(audioCtx.destination);
+        
+        analyser.fftSize = 64; 
+        isInitialized = true;
+      } catch(e) {}
+    }
+
+    function togglePlay() {
+      initAudio();
+
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      if (radioPlayer.paused) {
+        radioPlayer.play();
+        playBtn.innerText = '⏸';
+        lcdStatus.innerText = 'STREAMING';
+        if (isInitialized) drawSpectrum();
+      } else {
+        radioPlayer.pause();
+        playBtn.innerText = '▶';
+        lcdStatus.innerText = 'PAUSED';
+      }
+    }
+
+    // Menggambar Gelombang Spektrum Modern Cyan-Purple
+    function drawSpectrum() {
+      if (radioPlayer.paused) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        return;
+      }
+
+      requestAnimationFrame(drawSpectrum);
+
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+      analyser.getByteFrequencyData(dataArray);
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const barWidth = (canvas.width / bufferLength) * 1.5;
+      let barHeight;
+      let x = 0;
+
+      for (let i = 0; i < bufferLength; i++) {
+        barHeight = dataArray[i] / 3.8;
+
+        // Gradasi warna neon modern
+        const gradient = ctx.createLinearGradient(0, canvas.height, 0, 0);
+        gradient.addColorStop(0, '#38bdf8');
+        gradient.addColorStop(1, '#8b5cf6');
+
+        ctx.fillStyle = gradient;
+        ctx.fillRect(x, canvas.height - barHeight, barWidth - 3, barHeight);
+
+        x += barWidth;
+      }
+    }
+
+    // Modal Popup Control
+    function openModal() { commentModal.classList.add('active'); }
+    function closeModal() { commentModal.classList.remove('active'); }
+    function closeModalOnOverlay(e) { if (e.target === commentModal) closeModal(); }
+
+    // CAPTCHA & KOMENTAR LOGIC
+    let captchaAnswer = 0;
     let localLikedComments = JSON.parse(localStorage.getItem('radio_liked_ids') || '[]');
+    let allComments = [];
+    let visibleCount = 10; 
 
     function generateCaptcha() {
       const num1 = Math.floor(Math.random() * 10) + 1;
@@ -379,58 +661,64 @@
       if (savedEmail) emailInput.value = savedEmail;
     }
 
-    // Mengambil komentar dari Google Sheets
     async function fetchComments() {
       try {
         const response = await fetch(SCRIPT_URL);
         const data = await response.json();
         
         if (!data || data.length === 0) {
-          commentsList.innerHTML = '<p style="text-align: center; color: var(--muted);">Belum ada komentar.</p>';
+          commentsList.innerHTML = '<p style="text-align:center;color:var(--muted);font-size:0.85rem;">Belum ada komentar.</p>';
+          btnLoadMore.style.display = 'none';
           return;
         }
 
-        commentsList.innerHTML = data.map(item => {
-          const date = new Date(item.timestamp).toLocaleString('id-ID', {
-            hour: '2-digit',
-            minute: '2-digit',
-            day: 'numeric',
-            month: 'short'
-          });
-          
-          const isLiked = localLikedComments.includes(item.id);
-          
-          return `
-            <div class="comment-item">
-              <div class="comment-header">
-                <div class="author-wrapper">
-                  <span class="comment-author">${escapeHtml(item.nama)}</span>
-                  <span class="user-badge">${escapeHtml(item.userCode)}</span>
-                </div>
-                <span class="comment-time">${date}</span>
-              </div>
-              <div class="comment-body">${escapeHtml(item.pesan)}</div>
-              <div class="comment-footer">
-                <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${item.id}, this)">
-                  ❤️ <span class="like-count">${item.likes || 0}</span>
-                </button>
-              </div>
-            </div>
-          `;
-        }).join('');
+        allComments = data; 
+        renderComments();
+
       } catch (err) {
-        commentsList.innerHTML = '<p style="text-align: center; color: var(--error);">Gagal memuat komentar.</p>';
+        commentsList.innerHTML = '<p style="text-align:center;color:red;font-size:0.85rem;">Gagal memuat komentar.</p>';
       }
     }
 
-    // Fungsi Mengirimkan Like
-    async function toggleLike(rowId, btnElement) {
-      if (localLikedComments.includes(rowId)) return; // Mencegah spaming Like dari user yang sama
+    function renderComments() {
+      const commentsToDisplay = allComments.slice(0, visibleCount);
 
+      commentsList.innerHTML = commentsToDisplay.map(item => {
+        const date = new Date(item.timestamp).toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
+        const isLiked = localLikedComments.includes(item.id);
+        
+        return `
+          <div class="comment-item">
+            <div class="comment-header">
+              <div>
+                <span class="comment-author">${escapeHtml(item.nama)}</span>
+                <span class="user-badge">${escapeHtml(item.userCode)}</span>
+              </div>
+              <span class="comment-time">${date}</span>
+            </div>
+            <div class="comment-body">${escapeHtml(item.pesan)}</div>
+            <div>
+              <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${item.id}, this)">
+                ❤️ <span class="like-count">${item.likes || 0}</span>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      btnLoadMore.style.display = allComments.length > visibleCount ? 'block' : 'none';
+    }
+
+    function loadMoreComments() {
+      visibleCount += 10;
+      renderComments();
+    }
+
+    async function toggleLike(rowId, btnElement) {
+      if (localLikedComments.includes(rowId)) return;
+      
       const countSpan = btnElement.querySelector('.like-count');
       let currentLikes = parseInt(countSpan.innerText) || 0;
-      
-      // Update UI lokal secara cepat
       countSpan.innerText = currentLikes + 1;
       btnElement.classList.add('liked');
       
@@ -444,17 +732,13 @@
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
           body: JSON.stringify({ action: 'like', rowId: rowId })
         });
-      } catch (err) {
-        console.error('Gagal mengirim Like:', err);
-      }
+      } catch (err) {}
     }
 
-    // Kirim Komentar Baru
     commentForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      const userAnswer = parseInt(captchaInput.value.trim(), 10);
-      if (userAnswer !== captchaAnswer) {
+      if (parseInt(captchaInput.value.trim(), 10) !== captchaAnswer) {
         alert('Jawaban Captcha salah!');
         generateCaptcha();
         return;
@@ -463,8 +747,6 @@
       const nama = namaInput.value.trim();
       const email = emailInput.value.trim();
       const pesan = pesanInput.value.trim();
-
-      if (!nama || !email || !pesan) return;
 
       localStorage.setItem('radio_user_name', nama);
       localStorage.setItem('radio_user_email', email);
@@ -482,13 +764,13 @@
 
         pesanInput.value = '';
         generateCaptcha();
+        closeModal();
 
         setTimeout(() => {
           fetchComments();
           submitBtn.disabled = false;
           submitBtn.innerText = 'Kirim Komentar';
-        }, 1500);
-
+        }, 1200);
       } catch (err) {
         alert('Gagal mengirim komentar.');
         submitBtn.disabled = false;
@@ -502,11 +784,10 @@
       return div.innerHTML;
     }
 
-    // Inisialisasi awal
     generateCaptcha();
     loadSavedUser();
     fetchComments();
-    setInterval(fetchComments, 10000); // Auto-refresh komentar tiap 10 detik
+    setInterval(fetchComments, 10000);
   </script>
 </body>
 </html>
