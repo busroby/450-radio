@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -43,6 +44,15 @@
       display: flex; 
       flex-direction: column; 
       gap: 18px; 
+    }
+    
+    /* STYLES ICON SVG */
+    .icon-svg {
+      width: 1em;
+      height: 1em;
+      fill: currentColor;
+      display: inline-block;
+      vertical-align: middle;
     }
     
     /* MODERN PLAYER CARD STYLING */
@@ -197,6 +207,11 @@
       position: relative;
     }
 
+    .play-btn-modern .icon-svg {
+      width: 24px;
+      height: 24px;
+    }
+
     .play-btn-modern:hover {
       transform: scale(1.05);
       box-shadow: 0 10px 25px var(--accent-glow);
@@ -244,6 +259,9 @@
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
       transition: transform 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .btn-open-popup:active {
@@ -295,7 +313,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .modal-header h3 {
@@ -307,9 +325,39 @@
       background: transparent;
       border: none;
       color: var(--muted);
-      font-size: 1.5rem;
       cursor: pointer;
-      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+
+    .btn-close .icon-svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* INDIKATOR BALASAN DI MODAL */
+    .reply-banner {
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.2);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: var(--primary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .btn-cancel-reply {
+      background: transparent;
+      border: none;
+      color: var(--like);
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.8rem;
     }
 
     .comment-form { 
@@ -372,11 +420,11 @@
       font-size: 0.95rem;
     }
 
-    /* LIST KOMENTAR */
+    /* LIST KOMENTAR & BALASAN */
     .comments-list { 
       display: flex; 
       flex-direction: column; 
-      gap: 10px; 
+      gap: 12px; 
     }
     
     .comment-item { 
@@ -387,6 +435,12 @@
       border-left: 3px solid var(--primary); 
     }
     
+    .comment-item.is-reply {
+      margin-left: 20px;
+      border-left-color: var(--accent);
+      background: rgba(15, 23, 42, 0.4);
+    }
+
     .comment-header { 
       display: flex; 
       justify-content: space-between; 
@@ -423,7 +477,12 @@
       color: #e2e8f0;
     }
     
-    .like-btn { 
+    .comment-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .like-btn, .reply-btn { 
       background: transparent; 
       border: 1px solid rgba(255, 255, 255, 0.1); 
       color: var(--muted); 
@@ -436,11 +495,21 @@
       gap: 4px;
       transition: all 0.2s;
     }
+
+    .like-btn .icon-svg, .reply-btn .icon-svg {
+      width: 13px;
+      height: 13px;
+    }
     
     .like-btn.liked { 
       background: rgba(244, 63, 94, 0.15); 
       border-color: var(--like); 
       color: var(--like); 
+    }
+
+    .reply-btn:hover {
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--primary);
     }
 
     .btn-more {
@@ -489,7 +558,9 @@
 
       <!-- Tombol Kontrol Utama -->
       <div class="player-controls">
-        <button class="play-btn-modern" id="playBtn" onclick="togglePlay()">▶</button>
+        <button class="play-btn-modern" id="playBtn" onclick="togglePlay()">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
       </div>
     </div>
 
@@ -502,7 +573,10 @@
     <div class="comments-card">
       <div class="comments-header">
         <h2>Komentar Pendengar</h2>
-        <button class="btn-open-popup" onclick="openModal()">✍️ Tulis Pesan</button>
+        <button class="btn-open-popup" onclick="openModal()">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+          Tulis Pesan
+        </button>
       </div>
 
       <div class="comments-list" id="commentsList"></div>
@@ -515,8 +589,16 @@
   <div class="modal-overlay" id="commentModal" onclick="closeModalOnOverlay(event)">
     <div class="modal-content">
       <div class="modal-header">
-        <h3>Tulis Pesan Anda</h3>
-        <button class="btn-close" onclick="closeModal()">&times;</button>
+        <h3 id="modalTitle">Tulis Pesan Anda</h3>
+        <button class="btn-close" onclick="closeModal()">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+
+      <!-- Banner Indikator Balasan -->
+      <div id="replyBanner" class="reply-banner" style="display: none;">
+        <span>Membalas <strong id="replyTargetName">@User</strong></span>
+        <button class="btn-cancel-reply" onclick="cancelReply()">Batal</button>
       </div>
       
       <form class="comment-form" id="commentForm">
@@ -535,7 +617,7 @@
   </div>
 
   <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzoI3m5EAcayQptkr5N4ljxgMNrD_ifD-nF_tNPvA2M7RFkS2l4GXZ85D-wMvYgFjWn/exec'; // Ganti dengan Web App URL milik Anda
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzoI3m5EAcayQptkr5N4ljxgMNrD_ifD-nF_tNPvA2M7RFkS2l4GXZ85D-wMvYgFjWn/exec'; // Ganti URL Apps Script Anda
     const commentForm = document.getElementById('commentForm');
     const namaInput = document.getElementById('namaInput');
     const emailInput = document.getElementById('emailInput');
@@ -546,6 +628,15 @@
     const captchaQuestion = document.getElementById('captchaQuestion');
     const captchaInput = document.getElementById('captchaInput');
     const commentModal = document.getElementById('commentModal');
+    
+    const replyBanner = document.getElementById('replyBanner');
+    const replyTargetName = document.getElementById('replyTargetName');
+
+    // SVG ICONS TEMPLATES
+    const playIconSVG = `<svg class="icon-svg" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+    const pauseIconSVG = `<svg class="icon-svg" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+    const heartIconSVG = `<svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>`;
+    const replyIconSVG = `<svg class="icon-svg" viewBox="0 0 24 24"><path d="M10 9V5l-7 7 7 7v-4.1c5 0 8.5 1.6 11 5.1-1-5-4-10-11-11z"/></svg>`;
 
     // AUDIO & VISUALIZER SPECTRUM
     const radioPlayer = document.getElementById('radioPlayer');
@@ -560,7 +651,7 @@
     // Autoplay Listener
     window.addEventListener('DOMContentLoaded', () => {
       radioPlayer.play().then(() => {
-        playBtn.innerText = '⏸';
+        playBtn.innerHTML = pauseIconSVG;
         lcdStatus.innerText = 'STREAMING';
       }).catch(() => {
         lcdStatus.innerText = 'PAUSED';
@@ -591,17 +682,16 @@
 
       if (radioPlayer.paused) {
         radioPlayer.play();
-        playBtn.innerText = '⏸';
+        playBtn.innerHTML = pauseIconSVG;
         lcdStatus.innerText = 'STREAMING';
         if (isInitialized) drawSpectrum();
       } else {
         radioPlayer.pause();
-        playBtn.innerText = '▶';
+        playBtn.innerHTML = playIconSVG;
         lcdStatus.innerText = 'PAUSED';
       }
     }
 
-    // Menggambar Gelombang Spektrum Modern Cyan-Purple
     function drawSpectrum() {
       if (radioPlayer.paused) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -623,7 +713,6 @@
       for (let i = 0; i < bufferLength; i++) {
         barHeight = dataArray[i] / 3.8;
 
-        // Gradasi warna neon modern
         const gradient = ctx.createLinearGradient(0, canvas.height, 0, 0);
         gradient.addColorStop(0, '#38bdf8');
         gradient.addColorStop(1, '#8b5cf6');
@@ -636,8 +725,29 @@
     }
 
     // Modal Popup Control
-    function openModal() { commentModal.classList.add('active'); }
-    function closeModal() { commentModal.classList.remove('active'); }
+    let selectedParentId = null;
+
+    function openModal(parentId = null, authorName = '') { 
+      selectedParentId = parentId;
+      if (parentId) {
+        replyTargetName.innerText = '@' + authorName;
+        replyBanner.style.display = 'flex';
+      } else {
+        replyBanner.style.display = 'none';
+      }
+      commentModal.classList.add('active'); 
+    }
+
+    function closeModal() { 
+      commentModal.classList.remove('active'); 
+      cancelReply();
+    }
+
+    function cancelReply() {
+      selectedParentId = null;
+      replyBanner.style.display = 'none';
+    }
+
     function closeModalOnOverlay(e) { if (e.target === commentModal) closeModal(); }
 
     // CAPTCHA & KOMENTAR LOGIC
@@ -681,32 +791,57 @@
     }
 
     function renderComments() {
-      const commentsToDisplay = allComments.slice(0, visibleCount);
+      // Kelompokkan komentar utama dan balasan
+      const parentComments = allComments.filter(c => !c.parentId);
+      const replies = allComments.filter(c => c.parentId);
 
-      commentsList.innerHTML = commentsToDisplay.map(item => {
-        const date = new Date(item.timestamp).toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
-        const isLiked = localLikedComments.includes(item.id);
-        
-        return `
-          <div class="comment-item">
-            <div class="comment-header">
-              <div>
-                <span class="comment-author">${escapeHtml(item.nama)}</span>
-                <span class="user-badge">${escapeHtml(item.userCode)}</span>
-              </div>
-              <span class="comment-time">${date}</span>
-            </div>
-            <div class="comment-body">${escapeHtml(item.pesan)}</div>
+      // Urutkan balasan dari terlama ke terbaru
+      replies.reverse();
+
+      const commentsToDisplay = parentComments.slice(0, visibleCount);
+
+      let html = '';
+
+      commentsToDisplay.forEach(item => {
+        html += renderCommentCard(item, false);
+
+        // Cari balasan dari komentar ini
+        const itemReplies = replies.filter(r => r.parentId == item.id);
+        itemReplies.forEach(reply => {
+          html += renderCommentCard(reply, true);
+        });
+      });
+
+      commentsList.innerHTML = html;
+      btnLoadMore.style.display = parentComments.length > visibleCount ? 'block' : 'none';
+    }
+
+    function renderCommentCard(item, isReply) {
+      const date = new Date(item.timestamp).toLocaleString('id-ID', { hour: '2-digit', minute: '2-digit', day: 'numeric', month: 'short' });
+      const isLiked = localLikedComments.includes(item.id);
+      
+      return `
+        <div class="comment-item ${isReply ? 'is-reply' : ''}">
+          <div class="comment-header">
             <div>
-              <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${item.id}, this)">
-                ❤️ <span class="like-count">${item.likes || 0}</span>
-              </button>
+              <span class="comment-author">${escapeHtml(item.nama)}</span>
+              <span class="user-badge">${escapeHtml(item.userCode)}</span>
             </div>
+            <span class="comment-time">${date}</span>
           </div>
-        `;
-      }).join('');
-
-      btnLoadMore.style.display = allComments.length > visibleCount ? 'block' : 'none';
+          <div class="comment-body">${escapeHtml(item.pesan)}</div>
+          <div class="comment-actions">
+            <button class="like-btn ${isLiked ? 'liked' : ''}" onclick="toggleLike(${item.id}, this)">
+              ${heartIconSVG} <span class="like-count">${item.likes || 0}</span>
+            </button>
+            ${!isReply ? `
+              <button class="reply-btn" onclick="openModal(${item.id}, '${escapeHtml(item.nama)}')">
+                ${replyIconSVG} Balas
+              </button>
+            ` : ''}
+          </div>
+        </div>
+      `;
     }
 
     function loadMoreComments() {
@@ -759,7 +894,12 @@
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-          body: JSON.stringify({ nama, email, pesan })
+          body: JSON.stringify({ 
+            nama, 
+            email, 
+            pesan, 
+            parentId: selectedParentId 
+          })
         });
 
         pesanInput.value = '';
