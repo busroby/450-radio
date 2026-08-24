@@ -1,0 +1,239 @@
+    /* PLAYER RADIO SLIM & ELEGANT */
+    .modern-player-card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      padding: 12px 14px;
+      border-radius: 14px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* NEW RADIO PLAYER */
+    /* Container Utama sesuai Gambar */
+    .station-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow: hidden;
+    }
+
+    .station-title-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .station-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .station-badge {
+      background: rgba(0, 168, 132, 0.15);
+      color: var(--primary);
+      border: 1px solid rgba(0, 168, 132, 0.3);
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 6px;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+
+    .station-freq {
+      color: var(--wa-muted);
+      font-size: 0.72rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .radio-card {
+      position: relative;
+      padding: 10px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      background: var(--card);
+      /*border: 1px solid var(--card-border);*/
+      /*padding: 12px 14px;*/
+      /*border-radius: 14px;*/
+      /*box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35);*/
+      display: flex;
+      flex-direction: column;
+      /*gap: 8px;*/
+      flex: 0 0 auto;
+      /*background: #202c33;*/
+    }
+
+    /* Bagian Header Atas */
+    .radio-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 5px;
+    }
+    .info-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .title-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .radio-title {
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+    }
+    .badge-live {
+      background-color: rgba(0, 168, 132, 0.15);
+      color: #00a884;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 168, 132, 0.3);
+      text-transform: uppercase;
+    }
+    .freq-badge {
+      background-color: #00a884;
+      color: #0d1520;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      width: max-content;
+    }
+
+    /* Tombol Play / Pause Sisi Kanan */
+    .btn-play-toggle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background-color: #00a884;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.1s ease, background-color 0.2s;
+      box-shadow: 0 0 15px rgba(0, 168, 132, 0.4);
+    }
+    .btn-play-toggle:hover {
+      background-color: #00c49a;
+    }
+    .btn-play-toggle:active {
+      transform: scale(0.95);
+    }
+    /* Ikon SVG di dalam tombol */
+    .btn-play-toggle svg {
+      fill: #0d1520;
+      width: 16px;
+      height: 16px;
+    }
+
+    /* Area Visualizer / Canvas Box */
+    .visualizer-box {
+      background-color: #070b12;
+      border-radius: 10px;
+      padding: 10px;
+      position: relative;
+    }
+    .visualizer-status-bar {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+    }
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #718096; /* Default warna abu-abu pas berhenti */
+      transition: color 0.3s;
+    }
+    .status-indicator::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background-color: #718096;
+      display: inline-block;
+      transition: background-color 0.3s, box-shadow 0.3s;
+    }
+    /* Style aktif saat siaran jalan */
+    .status-indicator.playing {
+      color: #00a884;
+    }
+    .status-indicator.playing::before {
+      background-color: #00a884;
+      box-shadow: 0 0 8px #00a884;
+    }
+    .label-visualizer {
+      color: #4a5568;
+    }
+
+    canvas#spectrumCanvas {
+      width: 100%;
+      height: 38px;
+      border-radius: 4px;
+      background: #091117;
+    }
+
+    /* Animasi kedip lembut untuk indikator LIVE */
+    @keyframes pulse-live {
+      0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 168, 132, 0.7); }
+      70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(0, 168, 132, 0); }
+      100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(0, 168, 132, 0); }
+    }
+
+    .status-indicator.playing::before {
+      animation: pulse-live 2s infinite;
+    }
+
+    /* Penegasan Visual Canvas */
+    canvas#spectrumCanvas {
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+    }
+
+    /* Tombol Play Neon Glow */
+    .btn-play-toggle {
+      /*background: var(--neon-gradient) !important; */
+      box-shadow: 0 0 20px var(--primary-glow),
+                  0 0 40px rgba(0, 242, 185, 0.2) !important;
+      transition: all 0.3s ease;
+    }
+
+    .btn-play-toggle:hover {
+      transform: scale(1.08);
+      box-shadow: 0 0 28px var(--primary-glow),
+                  0 0 50px rgba(0, 242, 185, 0.4) !important;
+    }
+
+    /* Badge LIVE Berkilau */
+    .station-badge, .badge-live {
+      background: rgba(0, 242, 185, 0.15) !important;
+      color: var(--primary) !important;
+      border: 1px solid var(--primary) !important;
+      box-shadow: 0 0 10px var(--primary-glow);
+      text-shadow: 0 0 5px var(--primary-glow);
+    }
+
+    /* Animasi Cahaya */
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+

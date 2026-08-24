@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <!--<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Creative Radio 450 - 144.500 MHz</title>
+  <!-- Tag Meta untuk Fullscreen & PWA -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0b141a">
+
+  <!-- Manifest JSON Inline (Pakai Data URL) -->
+  <link rel="manifest" href='data:application/manifest+json,{"name":"Creative Radio 450","short_name":"Radio450","start_url":".","display":"standalone","background_color":"#0b141a","theme_color":"#0b141a","orientation":"portrait"}'>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/radio.css">
+  <link rel="stylesheet" href="css/chat.css">
+  <link rel="stylesheet" href="css/gallery.css">
+</head>
+<body>
+  <div class="container">
+    <div class="radio-card">
+      <!-- Bagian Header -->
+      <div class="radio-header">
+        <div class="info-left">
+          <div class="station-title-group">
+            <h1 class="station-title">Creative Radio 450</h1>
+            <span class="station-badge">LIVE</span>
+          </div>
+          <div class="station-freq">
+            <span>Freq:</span>
+            <div class="freq-badge">144.500 MHz</div>
+          </div>
+        </div>
+
+        <!-- Tombol Kontrol Kanan -->
+        <button id="playBtn" class="btn-play-toggle" title="Putar">
+          <!-- Ikon Play Bawaan (Segitiga) -->
+          <svg id="playIcon" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+      </div>
+
+      <!-- Box Visualizer Spektrum -->
+      <div class="visualizer-box">
+        <div class="visualizer-status-bar">
+          <div id="statusIndicator" class="status-indicator">Paused</div>
+          <div class="label-visualizer">Visualizer</div>
+        </div>
+        <!-- Resolusi internal canvas disesuaikan untuk ketajaman menggambar -->
+        <canvas id="spectrumCanvas"></canvas>
+      </div>
+    </div>
+
+    <!-- AREA CHAT WHATSAPP STYLE -->
+    <div class="comments-card">
+      <div class="comments-header">
+        <h2>
+          <svg class="icon-svg" viewBox="0 0 24 24" style="color:var(--primary)"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+          Obrolan Pendengar
+        </h2>
+        <button class="btn-open-popup" onclick="openModal()">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          Kirim Pesan
+        </button>
+      </div>
+
+      <div class="chat-area" id="commentsList"></div>
+
+      <button class="btn-scroll-bottom" id="btnScrollBottom" onclick="scrollToBottomManual()">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z"/></svg>
+        <span class="unread-badge" id="unreadBadge">0</span>
+      </button>
+    </div>
+
+    <!-- Halaman Utama (Radio) -->
+    <!--<div id="radio-page">
+
+    </div>-->
+
+    <!-- Halaman Galeri -->
+    <div id="gallery-page" class="page-content">
+      <h3 class="page-title"><center>Galeri Kegiatan</center></h3>
+      <div id="galleryGrid" class="gallery-grid">
+
+      </div>
+    </div>
+
+  </div>
+
+    <!-- NAVIGASI MENU BAWAH -->
+    <nav class="bottom-nav">
+      <button class="nav-btn active" id="btn-nav-radio" onclick="switchPage('comments-card', this)">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+        <span>Obrolan</span>
+      </button>
+      <button class="nav-btn" id="btn-nav-gallery" onclick="switchPage('gallery-page', this)">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H9l2-3zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/></svg>
+        <span>Galeri</span>
+      </button>
+    </nav>
+
+    <!-- MODAL LIGHTBOX FOTO GALERI -->
+    <div class="lightbox-overlay" id="lightboxModal" onclick="closeLightboxOnOverlay(event)">
+      <div class="lightbox-content">
+        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+        <img id="lightboxImg" class="lightbox-img" src="" alt="Preview Foto">
+        <div id="lightboxCaption" class="lightbox-caption"></div>
+      </div>
+    </div>
+
+  <!-- POPUP MODAL TULIS PESAN -->
+  <div class="modal-overlay" id="commentModal" onclick="closeModalOnOverlay(event)">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modalTitle">Tulis Pesan</h3>
+        <button class="btn-close" onclick="closeModal()">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </div>
+
+      <div id="replyBanner" class="reply-banner" style="display: none;">
+        <span>Membalas <strong id="replyTargetName">@User</strong></span>
+        <button class="btn-cancel-reply" onclick="cancelReply()">Batal</button>
+      </div>
+
+      <form class="comment-form" id="commentForm">
+        <div class="form-row">
+          <div class="input-wrapper">
+            <input type="text" id="namaInput" placeholder="Nama Anda" required>
+          </div>
+          <div class="input-wrapper">
+            <input type="email" id="emailInput" placeholder="Email (Privat)" required>
+            <span class="error-msg" id="emailError">Email tidak valid / domain tidak ditemukan.</span>
+          </div>
+        </div>
+        <textarea id="pesanInput" rows="3" placeholder="Ketik pesan..." required></textarea>
+        <div class="captcha-box">
+          <span class="captcha-label" id="captchaQuestion">Berapa 0 + 0?</span>
+          <input type="number" id="captchaInput" placeholder="Hasil?" required style="width: 75px; text-align: center;">
+        </div>
+        <button type="submit" class="btn-submit" id="submitBtn">Kirim</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/radio.js"></script>
+  <script>
+    generateCaptcha();
+    loadSavedUser();
+    fetchComments(true);
+    setInterval(() => fetchComments(false), 6000);
+  </script>
+
+</body>
+</html>
