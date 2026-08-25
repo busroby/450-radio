@@ -1,4 +1,4 @@
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxXGHkqmmEnlDwYhEP3mH7bMt9tMLCC-kULxI4Jfeqfp102ReLWSBwEBBl88OwcsrvClQ/exec';
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby_O1fa98OjJqmah-AvmIRU_IrZOK7Yi6eH_7PBP9QJTjz_MwEeyB_wWN350u2Tey35/exec';
     const commentForm = document.getElementById('commentForm');
     const namaInput = document.getElementById('namaInput');
     const emailInput = document.getElementById('emailInput');
