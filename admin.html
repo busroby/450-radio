@@ -130,7 +130,7 @@
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby_O1fa98OjJqmah-AvmIRU_IrZOK7Yi6eH_7PBP9QJTjz_MwEeyB_wWN350u2Tey35/exec';
     const ADMIN_PIN = '@123456#'; // Ganti dengan PIN rahasia Anda
 
-    function checkPin() {
+    /*function checkPin() {
       const pin = document.getElementById('pinInput').value;
       if (pin === ADMIN_PIN) {
         document.getElementById('login-box').classList.add('hidden');
@@ -139,8 +139,43 @@
       } else {
         alert('PIN Admin Salah!');
       }
-    }
+    }*/
 
+    async function checkPin() {
+      const pinInput = document.getElementById('pinInput').value;
+      if (!pinInput) return alert('Masukkan PIN Admin!');
+    
+      const payload = {
+        action: 'checkPassword',
+        password: pinInput
+      };
+    
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+    
+        const result = await res.json();
+    
+        if (result.status === 'success') {
+          document.getElementById('login-box').classList.add('hidden');
+          document.getElementById('dashboard').classList.remove('hidden');
+          
+          // Muat data admin setelah berhasil login
+          loadChatAdmin();
+          loadGalleryAdmin();
+        } else if (result.status === 'wrong') {
+          alert('PIN Admin Salah!');
+        } else {
+          alert(result.message || 'Gagal terhubung ke server.');
+        }
+      } catch (err) {
+        alert('Terjadi kesalahan koneksi.');
+      }
+    }
+    
     // Helper format link Google Drive
     function formatDriveUrl(url) {
       if (url.includes('drive.google.com')) {
@@ -342,7 +377,7 @@
         body: JSON.stringify(payload)
       });
 
-      function checkPin() {
+      /*function checkPin() {
         const pin = document.getElementById('pinInput').value;
         if (pin === ADMIN_PIN) {
           document.getElementById('login-box').classList.add('hidden');
@@ -354,7 +389,7 @@
         } else {
           alert('PIN Admin Salah!');
         }
-      }
+      }*/
       
       alert('Foto dihapus!');
       loadGalleryAdmin();
