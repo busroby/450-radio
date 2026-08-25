@@ -207,8 +207,7 @@
         if (result.status === 'success') {
           document.getElementById('login-box').classList.add('hidden');
           document.getElementById('dashboard').classList.remove('hidden');
-          
-          loadChatAdmin();
+
           loadGalleryAdmin();
         } else if (result.status === 'wrong') {
           alert('PIN Admin Salah!');
