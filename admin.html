@@ -232,6 +232,18 @@
       }
     }
 
+    // Helper format link Google Drive agar bisa langsung tampil sebagai gambar
+    function formatDriveUrl(url) {
+      if (!url) return '';
+      if (url.includes('drive.google.com')) {
+        const idMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+        if (idMatch && idMatch[1]) {
+          return `https://lh3.googleusercontent.com/d/${idMatch[1]}`;
+        }
+      }
+      return url;
+    }
+
     /* CONTROLLER MODAL TAMBAH GALERI */
     function openAddModal() {
       document.getElementById('addGalleryModal').classList.remove('hidden');
@@ -261,10 +273,13 @@
     // 1. TAMBAH FOTO GALERI
     async function addGalleryItem() {
       const title = document.getElementById('gTitle').value;
-      let imageUrl = document.getElementById('gUrl').value;
+      let rawUrl = document.getElementById('gUrl').value;
       const caption = document.getElementById('gCaption').value;
 
-      if (!title || !imageUrl) return alert('Judul dan URL Foto Wajib Diisi!');
+      if (!title || !rawUrl) return alert('Judul dan URL Foto Wajib Diisi!');
+
+      // Format URL Google Drive secara otomatis
+      const imageUrl = formatDriveUrl(rawUrl);
 
       const payload = {
         action: 'addGallery',
@@ -386,11 +401,14 @@
     async function saveGalleryEdit() {
       const rowId = document.getElementById('editRowId').value;
       const title = document.getElementById('editTitle').value;
-      let imageUrl = document.getElementById('editUrl').value;
+      let rawUrl = document.getElementById('editUrl').value;
       const caption = document.getElementById('editCaption').value;
     
-      if (!title || !imageUrl) return alert('Judul dan URL Foto tidak boleh kosong!');
+      if (!title || !rawUrl) return alert('Judul dan URL Foto tidak boleh kosong!');
     
+      // Format URL Google Drive secara otomatis saat edit
+      const imageUrl = formatDriveUrl(rawUrl);
+
       const payload = {
         action: 'editGallery',
         rowId: rowId,
