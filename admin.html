@@ -69,25 +69,25 @@
   <!-- DASHBOARD ADMIN CONTAINER -->
   <div id="dashboard" class="hidden">
     
-    <!-- MODAL EDIT FOTO GALERI -->
-    <div id="editGalleryModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:flex; justify-content:center; align-items:center;">
-      <div class="admin-card" style="width: 90%; max-width: 400px; background: #111b21;">
-        <h2>✏️ Edit Foto Galeri</h2>
-        <input type="hidden" id="editRowId">
-        
-        <label style="font-size: 0.8rem; color: var(--muted);">Judul Foto:</label>
-        <input type="text" id="editTitle">
-        
-        <label style="font-size: 0.8rem; color: var(--muted);">URL Foto (Drive/Direct):</label>
-        <input type="text" id="editUrl">
-        
-        <label style="font-size: 0.8rem; color: var(--muted);">Caption / Deskripsi:</label>
-        <textarea id="editCaption" rows="3"></textarea>
-        
-        <button onclick="saveGalleryEdit()">Simpan Perubahan</button>
-        <button onclick="closeEditModal()" style="background:#444; color:#fff; margin-top:0;">Batal</button>
-      </div>
+  <!-- MODAL EDIT FOTO GALERI (DIPERBAIKI) -->
+  <div id="editGalleryModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center;">
+    <div class="admin-card" style="width: 90%; max-width: 400px; background: #111b21;">
+      <h2>✏️ Edit Foto Galeri</h2>
+      <input type="hidden" id="editRowId">
+      
+      <label style="font-size: 0.8rem; color: var(--muted);">Judul Foto:</label>
+      <input type="text" id="editTitle">
+      
+      <label style="font-size: 0.8rem; color: var(--muted);">URL Foto (Drive/Direct):</label>
+      <input type="text" id="editUrl">
+      
+      <label style="font-size: 0.8rem; color: var(--muted);">Caption / Deskripsi:</label>
+      <textarea id="editCaption" rows="3"></textarea>
+      
+      <button onclick="saveGalleryEdit()">Simpan Perubahan</button>
+      <button onclick="closeEditModal()" style="background:#444; color:#fff; margin-top:0;">Batal</button>
     </div>
+  </div>
     
     <!-- CONTAINER DAFTAR GALERI DI ADMIN DASHBOARD -->
     <div class="admin-card">
@@ -240,8 +240,8 @@
         container.innerHTML = 'Gagal memuat galeri.';
       }
     }
-    
-    // 2. BUKA MODAL EDIT DENGAN DATA LAMA
+
+    // BUKA MODAL EDIT (HANYA SAAT TOMBOL EDIT DIKLIK)
     function openEditModal(rowId, title, url, caption) {
       document.getElementById('editRowId').value = rowId;
       document.getElementById('editTitle').value = title;
@@ -250,13 +250,14 @@
       
       const modal = document.getElementById('editGalleryModal');
       modal.classList.remove('hidden');
-      modal.style.display = 'flex';
+      modal.style.display = 'flex'; // Tampilkan flex saat diklik
     }
     
+    // TUTUP MODAL EDIT
     function closeEditModal() {
       const modal = document.getElementById('editGalleryModal');
       modal.classList.add('hidden');
-      modal.style.display = 'none';
+      modal.style.display = 'none'; // Sembunyikan total
     }
     
     // 3. SIMPAN HASIL EDIT GALERI KE GOOGLE SPREADSHEET
@@ -308,7 +309,21 @@
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       });
-    
+
+      function checkPin() {
+        const pin = document.getElementById('pinInput').value;
+        if (pin === ADMIN_PIN) {
+          document.getElementById('login-box').classList.add('hidden');
+          document.getElementById('dashboard').classList.remove('hidden');
+          
+          // Muat data chat dan galeri saat berhasil login
+          loadChatAdmin();
+          loadGalleryAdmin();
+        } else {
+          alert('PIN Admin Salah!');
+        }
+      }
+      
       alert('Foto dihapus!');
       loadGalleryAdmin();
     }
