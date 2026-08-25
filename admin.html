@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel - Radio Streaming</title>
+  <style>
+    :root {
+      --bg: #0b141a;
+      --card: #111b21;
+      --primary: #00f2b9;
+      --danger: #ff4d4d;
+      --text: #e9edef;
+      --muted: #8696a0;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 16px;
+    }
+    .admin-card {
+      background: var(--card);
+      border: 1px solid rgba(0, 242, 185, 0.2);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+    }
+    h2 { margin-top: 0; color: var(--primary); font-size: 1.2rem; }
+    input, textarea, button {
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: #202c33;
+      color: var(--text);
+      box-sizing: border-box;
+    }
+    button {
+      background: var(--primary);
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+    }
+    .btn-danger { background: var(--danger); color: #fff; width: auto; padding: 6px 12px; }
+    .list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    #login-box { max-width: 360px; margin: 80px auto; text-align: center; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN PIN ADMIN -->
+  <div id="login-box" class="admin-card">
+    <h2>🔒 Login Admin</h2>
+    <input type="password" id="pinInput" placeholder="Masukkan PIN Admin">
+    <button onclick="checkPin()">Masuk Panel</button>
+  </div>
+
+  <!-- DASHBOARD ADMIN CONTAINER -->
+  <div id="dashboard" class="hidden">
+    
+    <!-- DASHBOARD KELOLA GALERI -->
+    <div class="admin-card">
+      <h2>🖼️ Tambah Foto Galeri</h2>
+      <input type="text" id="gTitle" placeholder="Judul Foto / Acara">
+      <input type="text" id="gUrl" placeholder="Link Foto (Google Drive / Direct URL)">
+      <textarea id="gCaption" placeholder="Keterangan singkat..."></textarea>
+      <button onclick="addGalleryItem()">+ Upload Ke Galeri</button>
+    </div>
+
+    <!-- DASHBOARD MODERASI CHAT -->
+    <div class="admin-card">
+      <h2>💬 Moderasi Chat (Hapus Pesan)</h2>
+      <button onclick="loadChatAdmin()" style="margin-bottom: 15px;">🔄 Refresh Chat</button>
+      <div id="chatAdminList">Memuat pesan...</div>
+    </div>
+
+  </div>
+
+  <script>
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby_O1fa98OjJqmah-AvmIRU_IrZOK7Yi6eH_7PBP9QJTjz_MwEeyB_wWN350u2Tey35/exec';
+    const ADMIN_PIN = '@123456#'; // Ganti dengan PIN rahasia Anda
+
+    function checkPin() {
+      const pin = document.getElementById('pinInput').value;
+      if (pin === ADMIN_PIN) {
+        document.getElementById('login-box').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        loadChatAdmin();
+      } else {
+        alert('PIN Admin Salah!');
+      }
+    }
+
+    // Helper format link Google Drive
+    function formatDriveUrl(url) {
+      if (url.includes('drive.google.com')) {
+        const idMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+        if (idMatch && idMatch[1]) return `https://lh3.googleusercontent.com/d/${idMatch[1]}`;
+      }
+      return url;
+    }
+
+    // 1. TAMBAH FOTO GALERI
+    async function addGalleryItem() {
+      const title = document.getElementById('gTitle').value;
+      let imageUrl = document.getElementById('gUrl').value;
+      const caption = document.getElementById('gCaption').value;
+
+      if (!title || !imageUrl) return alert('Judul dan URL Foto Wajib Diisi!');
+      
+      //imageUrl = formatDriveUrl(imageUrl);
+
+      const payload = {
+        action: 'addGallery',
+        title: title,
+        imageUrl: imageUrl,
+        caption: caption
+      };
+
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload)
+      });
+
+      alert('Foto Berhasil Ditambahkan ke Galeri!');
+      document.getElementById('gTitle').value = '';
+      document.getElementById('gUrl').value = '';
+      document.getElementById('gCaption').value = '';
+    }
+
+    // 2. LOAD & MODERASI CHAT
+    async function loadChatAdmin() {
+      const container = document.getElementById('chatAdminList');
+      container.innerHTML = 'Memuat...';
+
+      const res = await fetch(SCRIPT_URL);
+      const data = await res.json();
+      
+      container.innerHTML = '';
+      data.reverse().forEach(item => {
+        container.innerHTML += `
+          <div class="list-item">
+            <div>
+              <strong>${item.nama}</strong>: ${item.pesan}
+            </div>
+            <button class="btn-danger" onclick="deleteChat(${item.id})">Hapus</button>
+          </div>
+        `;
+      });
+    }
+
+    // 3. HAPUS CHAT
+    async function deleteChat(id) {
+      if (!confirm('Yakin ingin menghapus pesan ini?')) return;
+
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        body: JSON.stringify({ action: 'deleteChat', id: id })
+      });
+
+      alert('Pesan dihapus!');
+      loadChatAdmin();
+    }
+  </script>
+</body>
+</html>
