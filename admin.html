@@ -74,6 +74,14 @@
       padding: 6px 12px; 
     }
 
+    .btn-edit {
+      background: var(--warning);
+      color: #000;
+      width: auto;
+      padding: 6px 12px;
+      margin-right: 6px;
+    }
+
     .list-item {
       display: flex;
       justify-content: space-between;
@@ -82,7 +90,7 @@
       border-bottom: 1px solid rgba(255,255,255,0.05);
       gap: 12px;
     }
-    .chat-info {
+    .chat-info, .gallery-info {
       flex: 1;
       overflow: hidden;
     }
@@ -104,6 +112,13 @@
       margin-top: 4px;
       word-break: break-word;
     }
+    .gallery-img-preview {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-right: 10px;
+    }
     #login-box { max-width: 360px; margin: 80px auto; text-align: center; }
     .hidden { display: none !important; }
   </style>
@@ -119,7 +134,28 @@
 
   <!-- DASHBOARD ADMIN CONTAINER -->
   <div id="dashboard" class="hidden">
-    <!-- DASHBOARD MODERASI CHAT -->
+
+    <!-- FITUR MANAJEMEN GALERI (TAMBAH / EDIT) -->
+    <div class="admin-card">
+      <h2 id="galleryFormTitle">🖼️ Tambah Galeri Foto</h2>
+      <input type="hidden" id="editGalleryId" value="">
+      
+      <label style="font-size:0.85rem; color:var(--muted);">Judul / Nama Foto:</label>
+      <input type="text" id="galleryTitle" placeholder="Contoh: Acara Live Radio">
+      
+      <label style="font-size:0.85rem; color:var(--muted);">URL Gambar:</label>
+      <input type="url" id="galleryUrl" placeholder="https://example.com/gambar.jpg">
+      
+      <div style="display:flex; gap:10px;">
+        <button id="btnSaveGallery" onclick="saveGallery()">Simpan Foto</button>
+        <button id="btnCancelEdit" class="hidden" style="background:#444; color:#fff;" onclick="resetGalleryForm()">Batal Edit</button>
+      </div>
+
+      <h3 style="color:var(--text); font-size:1rem; margin-top:20px;">Daftar Galeri</h3>
+      <div id="galleryAdminList">Memuat galeri...</div>
+    </div>
+
+    <!-- FITUR MODERASI CHAT (HAPUS KOMENTAR & BALASAN) -->
     <div class="admin-card">
       <h2>💬 Moderasi Chat (Hapus Pesan & Balasan)</h2>
       <button onclick="loadChatAdmin()" class="btn-admin-icon" style="background:#202c33; color:var(--text); border:1px solid rgba(255,255,255,0.1);">
@@ -130,6 +166,7 @@
       </button>
       <div id="chatAdminList" style="margin-top:10px;">Memuat pesan...</div>
     </div>
+
   </div>
 
   <script>
@@ -160,6 +197,7 @@
         if (result.status === 'success') {
           document.getElementById('login-box').classList.add('hidden');
           document.getElementById('dashboard').classList.remove('hidden');
+          loadGalleryAdmin();
           loadChatAdmin();
         } else {
           alert('PIN Admin Salah!');
@@ -169,7 +207,137 @@
       }
     }
 
-    /* MODERASI CHAT / HAPUS KOMENTAR & BALASAN */
+    /* =========================================================
+       1. FITUR MANAJEMEN GALERI (TAMBAH, EDIT, HAPUS)
+       ========================================================= */
+    
+    async function loadGalleryAdmin() {
+      const container = document.getElementById('galleryAdminList');
+      container.innerHTML = 'Memuat...';
+
+      try {
+        const res = await fetch(SCRIPT_URL + '?action=getGallery');
+        const data = await res.json();
+
+        container.innerHTML = '';
+        if (!data || data.length === 0) {
+          container.innerHTML = '<p style="color:var(--muted)">Belum ada data galeri.</p>';
+          return;
+        }
+
+        data.forEach(item => {
+          const safeTitle = escapeHtml(item.title || item.judul);
+          const safeUrl = escapeHtml(item.url || item.imageUrl);
+          const idStr = String(item.id);
+
+          container.innerHTML += `
+            <div class="list-item">
+              <img src="${safeUrl}" class="gallery-img-preview" alt="Gallery" onerror="this.src='https://via.placeholder.com/50';">
+              <div class="gallery-info">
+                <strong style="color:var(--text);">${safeTitle}</strong>
+                <div style="font-size:0.75rem; color:var(--muted); word-break:break-all;">${safeUrl}</div>
+              </div>
+              <div style="display:flex;">
+                <button class="btn-edit btn-admin-icon" onclick="editGallery('${idStr}', '${safeTitle}', '${safeUrl}')">
+                  <span>Edit</span>
+                </button>
+                <button class="btn-danger btn-admin-icon" onclick="deleteGallery('${idStr}')">
+                  <span>Hapus</span>
+                </button>
+              </div>
+            </div>
+          `;
+        });
+      } catch (err) {
+        container.innerHTML = 'Gagal memuat galeri.';
+      }
+    }
+
+    async function saveGallery() {
+      const editId = document.getElementById('editGalleryId').value;
+      const title = document.getElementById('galleryTitle').value.trim();
+      const url = document.getElementById('galleryUrl').value.trim();
+      const btn = document.getElementById('btnSaveGallery');
+
+      if (!title || !url) return alert('Judul dan URL Foto wajib diisi!');
+
+      const actionType = editId ? 'editGallery' : 'addGallery';
+      const payload = {
+        action: actionType,
+        id: editId,
+        title: title,
+        url: url
+      };
+
+      btn.disabled = true;
+      btn.innerText = 'Menyimpan...';
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await res.json();
+        if (result.status === 'success') {
+          alert(editId ? 'Galeri berhasil diperbarui!' : 'Galeri berhasil ditambahkan!');
+          resetGalleryForm();
+          loadGalleryAdmin();
+        } else {
+          alert('Gagal: ' + (result.message || 'Terjadi kesalahan.'));
+        }
+      } catch (err) {
+        alert('Gagal menyimpan galeri.');
+      } finally {
+        btn.disabled = false;
+        btn.innerText = 'Simpan Foto';
+      }
+    }
+
+    function editGallery(id, title, url) {
+      document.getElementById('galleryFormTitle').innerText = '✏️ Edit Galeri Foto';
+      document.getElementById('editGalleryId').value = id;
+      document.getElementById('galleryTitle').value = title;
+      document.getElementById('galleryUrl').value = url;
+      document.getElementById('btnCancelEdit').classList.remove('hidden');
+    }
+
+    function resetGalleryForm() {
+      document.getElementById('galleryFormTitle').innerText = '🖼️ Tambah Galeri Foto';
+      document.getElementById('editGalleryId').value = '';
+      document.getElementById('galleryTitle').value = '';
+      document.getElementById('galleryUrl').value = '';
+      document.getElementById('btnCancelEdit').classList.add('hidden');
+    }
+
+    async function deleteGallery(id) {
+      if (!confirm('Yakin ingin menghapus foto galeri ini?')) return;
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'deleteGallery', id: id })
+        });
+
+        const result = await res.json();
+        if (result.status === 'success') {
+          alert('Foto galeri berhasil dihapus!');
+          loadGalleryAdmin();
+        } else {
+          alert('Gagal menghapus foto.');
+        }
+      } catch (err) {
+        alert('Terjadi kesalahan koneksi.');
+      }
+    }
+
+
+    /* =========================================================
+       2. FITUR MODERASI CHAT (HAPUS PESAN & BALASAN)
+       ========================================================= */
+
     async function loadChatAdmin() {
       const container = document.getElementById('chatAdminList');
       container.innerHTML = 'Memuat...';
