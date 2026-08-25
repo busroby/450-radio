@@ -199,6 +199,119 @@
       alert('Pesan dihapus!');
       loadChatAdmin();
     }
+
+    // 1. LOAD DAFTAR FOTO GALERI DI ADMIN
+    async function loadGalleryAdmin() {
+      const container = document.getElementById('galleryAdminList');
+      container.innerHTML = 'Memuat...';
+    
+      try {
+        const res = await fetch(SCRIPT_URL + '?action=gallery');
+        const data = await res.json();
+        
+        container.innerHTML = '';
+        if(!data || data.length === 0) {
+          container.innerHTML = '<p style="color:var(--muted)">Belum ada foto di galeri.</p>';
+          return;
+        }
+    
+        data.forEach(item => {
+          // escape teks quotes untuk fungsi onclick
+          const safeTitle = (item.title || '').replace(/'/g, "\\'");
+          const safeCaption = (item.caption || '').replace(/'/g, "\\'");
+          const safeUrl = (item.imageUrl || '').replace(/'/g, "\\'");
+    
+          container.innerHTML += `
+            <div class="list-item" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+              <img src="${item.imageUrl}" style="width:50px; height:50px; object-fit:cover; border-radius:6px;">
+              <div style="flex:1; overflow:hidden;">
+                <strong style="font-size:0.9rem; display:block; text-overflow:ellipsis; white-space:nowrap; overflow:hidden;">${item.title}</strong>
+                <small style="color:var(--muted)">${item.caption || '-'}</small>
+              </div>
+              <div style="display:flex; gap:5px;">
+                <button style="width:auto; padding:6px 10px; font-size:0.75rem; background:#e2a03f;" 
+                  onclick="openEditModal(${item.id}, '${safeTitle}', '${safeUrl}', '${safeCaption}')">Edit</button>
+                <button class="btn-danger" style="font-size:0.75rem;" onclick="deleteGallery(${item.id})">Hapus</button>
+              </div>
+            </div>
+          `;
+        });
+      } catch (err) {
+        container.innerHTML = 'Gagal memuat galeri.';
+      }
+    }
+    
+    // 2. BUKA MODAL EDIT DENGAN DATA LAMA
+    function openEditModal(rowId, title, url, caption) {
+      document.getElementById('editRowId').value = rowId;
+      document.getElementById('editTitle').value = title;
+      document.getElementById('editUrl').value = url;
+      document.getElementById('editCaption').value = caption;
+      
+      const modal = document.getElementById('editGalleryModal');
+      modal.classList.remove('hidden');
+      modal.style.display = 'flex';
+    }
+    
+    function closeEditModal() {
+      const modal = document.getElementById('editGalleryModal');
+      modal.classList.add('hidden');
+      modal.style.display = 'none';
+    }
+    
+    // 3. SIMPAN HASIL EDIT GALERI KE GOOGLE SPREADSHEET
+    async function saveGalleryEdit() {
+      const rowId = document.getElementById('editRowId').value;
+      const title = document.getElementById('editTitle').value;
+      let imageUrl = document.getElementById('editUrl').value;
+      const caption = document.getElementById('editCaption').value;
+    
+      if (!title || !imageUrl) return alert('Judul dan URL Foto tidak boleh kosong!');
+    
+      // Format link Google Drive jika dimasukkan URL Drive biasa
+      imageUrl = formatDriveUrl(imageUrl);
+    
+      const payload = {
+        action: 'editGallery',
+        rowId: rowId,
+        title: title,
+        imageUrl: imageUrl,
+        caption: caption
+      };
+    
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+    
+        alert('Galeri Berhasil Diperbarui!');
+        closeEditModal();
+        loadGalleryAdmin(); // Reload daftar galeri admin
+      } catch (err) {
+        alert('Gagal menyimpan perubahan.');
+      }
+    }
+    
+    // 4. HAPUS FOTO GALERI
+    async function deleteGallery(rowId) {
+      if (!confirm('Yakin ingin menghapus foto galeri ini?')) return;
+    
+      const payload = {
+        action: 'deleteGallery',
+        rowId: rowId
+      };
+    
+      await fetch(SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+    
+      alert('Foto dihapus!');
+      loadGalleryAdmin();
+    }
   </script>
 </body>
 </html>
