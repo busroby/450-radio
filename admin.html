@@ -10,6 +10,7 @@
       --card: #111b21;
       --primary: #00f2b9;
       --danger: #ff4d4d;
+      --warning: #e2a03f;
       --text: #e9edef;
       --muted: #8696a0;
     }
@@ -45,7 +46,42 @@
       cursor: pointer;
       border: none;
     }
-    .btn-danger { background: var(--danger); color: #fff; width: auto; padding: 6px 12px; }
+
+    /* BROWSER COMPATIBLE SVG STYLING */
+    svg.admin-icon {
+      width: 16px !important;
+      height: 16px !important;
+      min-width: 16px;
+      min-height: 16px;
+      display: inline-block;
+      vertical-align: middle;
+      fill: currentColor;
+      pointer-events: none;
+      flex-shrink: 0;
+    }
+
+    .btn-admin-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      line-height: 1;
+    }
+
+    .btn-danger { 
+      background: var(--danger); 
+      color: #fff; 
+      width: auto; 
+      padding: 6px 12px; 
+    }
+
+    .btn-warning {
+      background: var(--warning);
+      color: #000;
+      width: auto;
+      padding: 6px 12px;
+    }
+
     .list-item {
       display: flex;
       justify-content: space-between;
@@ -54,7 +90,7 @@
       border-bottom: 1px solid rgba(255,255,255,0.05);
     }
     #login-box { max-width: 360px; margin: 80px auto; text-align: center; }
-    .hidden { display: none; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -69,31 +105,34 @@
   <!-- DASHBOARD ADMIN CONTAINER -->
   <div id="dashboard" class="hidden">
     
-  <!-- MODAL EDIT FOTO GALERI (DIPERBAIKI) -->
-  <div id="editGalleryModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center;">
-    <div class="admin-card" style="width: 90%; max-width: 400px; background: #111b21;">
-      <h2>✏️ Edit Foto Galeri</h2>
-      <input type="hidden" id="editRowId">
-      
-      <label style="font-size: 0.8rem; color: var(--muted);">Judul Foto:</label>
-      <input type="text" id="editTitle">
-      
-      <label style="font-size: 0.8rem; color: var(--muted);">URL Foto (Drive/Direct):</label>
-      <input type="text" id="editUrl">
-      
-      <label style="font-size: 0.8rem; color: var(--muted);">Caption / Deskripsi:</label>
-      <textarea id="editCaption" rows="3"></textarea>
-      
-      <button onclick="saveGalleryEdit()">Simpan Perubahan</button>
-      <button onclick="closeEditModal()" style="background:#444; color:#fff; margin-top:0;">Batal</button>
+    <!-- MODAL EDIT FOTO GALERI -->
+    <div id="editGalleryModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center;">
+      <div class="admin-card" style="width: 90%; max-width: 400px; background: #111b21;">
+        <h2>✏️ Edit Foto Galeri</h2>
+        <input type="hidden" id="editRowId">
+        
+        <label style="font-size: 0.8rem; color: var(--muted);">Judul Foto:</label>
+        <input type="text" id="editTitle">
+        
+        <label style="font-size: 0.8rem; color: var(--muted);">URL Foto (Drive/Direct):</label>
+        <input type="text" id="editUrl">
+        
+        <label style="font-size: 0.8rem; color: var(--muted);">Caption / Deskripsi:</label>
+        <textarea id="editCaption" rows="3"></textarea>
+        
+        <button onclick="saveGalleryEdit()">Simpan Perubahan</button>
+        <button onclick="closeEditModal()" style="background:#444; color:#fff; margin-top:0;">Batal</button>
+      </div>
     </div>
-  </div>
     
     <!-- CONTAINER DAFTAR GALERI DI ADMIN DASHBOARD -->
     <div class="admin-card">
       <h2>🖼️ Kelola & Edit Galeri</h2>
       <!-- Tombol Refresh Galeri -->
       <button onclick="loadGalleryAdmin()" class="btn-admin-icon">
+        <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+        </svg>
         <span>Refresh Galeri</span>
       </button>
       <div id="galleryAdminList">Memuat foto galeri...</div>
@@ -105,7 +144,12 @@
       <input type="text" id="gTitle" placeholder="Judul Foto / Acara">
       <input type="text" id="gUrl" placeholder="Link Foto (Google Drive / Direct URL)">
       <textarea id="gCaption" placeholder="Keterangan singkat..."></textarea>
-      <button onclick="addGalleryItem()">+ Upload Ke Galeri</button>
+      <button onclick="addGalleryItem()" class="btn-admin-icon">
+        <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+        </svg>
+        <span>Upload Ke Galeri</span>
+      </button>
     </div>
 
     <!-- DASHBOARD MODERASI CHAT -->
@@ -113,6 +157,9 @@
       <h2>💬 Moderasi Chat (Hapus Pesan)</h2>
       <!-- Tombol Refresh Chat -->
       <button onclick="loadChatAdmin()" class="btn-admin-icon">
+        <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+        </svg>
         <span>Refresh Chat</span>
       </button>
       <div id="chatAdminList">Memuat pesan...</div>
@@ -122,7 +169,6 @@
 
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby_O1fa98OjJqmah-AvmIRU_IrZOK7Yi6eH_7PBP9QJTjz_MwEeyB_wWN350u2Tey35/exec';
-    const ADMIN_PIN = '@123456#'; // Ganti dengan PIN rahasia Anda
 
     async function checkPin() {
       const pinInput = document.getElementById('pinInput').value;
@@ -176,8 +222,8 @@
 
       if (!title || !imageUrl) return alert('Judul dan URL Foto Wajib Diisi!');
       
-      //imageUrl = formatDriveUrl(imageUrl);
-
+      imageUrl = formatDriveUrl(imageUrl); 
+      
       const payload = {
         action: 'addGallery',
         title: title,
@@ -194,6 +240,7 @@
       document.getElementById('gTitle').value = '';
       document.getElementById('gUrl').value = '';
       document.getElementById('gCaption').value = '';
+      loadGalleryAdmin();
     }
 
     // 2. LOAD & MODERASI CHAT
@@ -201,20 +248,29 @@
       const container = document.getElementById('chatAdminList');
       container.innerHTML = 'Memuat...';
 
-      const res = await fetch(SCRIPT_URL);
-      const data = await res.json();
-      
-      container.innerHTML = '';
-      data.reverse().forEach(item => {
-        container.innerHTML += `
-          <div class="list-item">
-            <div>
-              <strong>${item.nama}</strong>: ${item.pesan}
+      try {
+        const res = await fetch(SCRIPT_URL);
+        const data = await res.json();
+        
+        container.innerHTML = '';
+        data.reverse().forEach(item => {
+          container.innerHTML += `
+            <div class="list-item">
+              <div>
+                <strong>${item.nama}</strong>: ${item.pesan}
+              </div>
+              <button class="btn-danger btn-admin-icon" onclick="deleteChat(${item.id})">
+                <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                  <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                </svg>
+                <span>Hapus</span>
+              </button>
             </div>
-            <button class="btn-danger" onclick="deleteChat(${item.id})">Hapus</button>
-          </div>
-        `;
-      });
+          `;
+        });
+      } catch (err) {
+        container.innerHTML = 'Gagal memuat pesan chat.';
+      }
     }
 
     // 3. HAPUS CHAT
@@ -230,7 +286,7 @@
       loadChatAdmin();
     }
 
-    // 1. LOAD DAFTAR FOTO GALERI DI ADMIN
+    // 4. LOAD DAFTAR FOTO GALERI DI ADMIN
     async function loadGalleryAdmin() {
       const container = document.getElementById('galleryAdminList');
       container.innerHTML = 'Memuat...';
@@ -246,7 +302,6 @@
         }
     
         data.forEach(item => {
-          // escape teks quotes untuk fungsi onclick
           const safeTitle = (item.title || '').replace(/'/g, "\\'");
           const safeCaption = (item.caption || '').replace(/'/g, "\\'");
           const safeUrl = (item.imageUrl || '').replace(/'/g, "\\'");
@@ -259,9 +314,19 @@
                 <small style="color:var(--muted)">${item.caption || '-'}</small>
               </div>
               <div style="display:flex; gap:5px;">
-                <button style="width:auto; padding:6px 10px; font-size:0.75rem; background:#e2a03f;" 
-                  onclick="openEditModal(${item.id}, '${safeTitle}', '${safeUrl}', '${safeCaption}')">Edit</button>
-                <button class="btn-danger" style="font-size:0.75rem;" onclick="deleteGallery(${item.id})">Hapus</button>
+                <button class="btn-warning btn-admin-icon" style="font-size:0.75rem;" 
+                  onclick="openEditModal(${item.id}, '${safeTitle}', '${safeUrl}', '${safeCaption}')">
+                  <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                    <path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                  </svg>
+                  <span>Edit</span>
+                </button>
+                <button class="btn-danger btn-admin-icon" style="font-size:0.75rem;" onclick="deleteGallery(${item.id})">
+                  <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                    <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                  </svg>
+                  <span>Hapus</span>
+                </button>
               </div>
             </div>
           `;
@@ -271,7 +336,7 @@
       }
     }
 
-    // BUKA MODAL EDIT (HANYA SAAT TOMBOL EDIT DIKLIK)
+    // BUKA MODAL EDIT
     function openEditModal(rowId, title, url, caption) {
       document.getElementById('editRowId').value = rowId;
       document.getElementById('editTitle').value = title;
@@ -280,17 +345,17 @@
       
       const modal = document.getElementById('editGalleryModal');
       modal.classList.remove('hidden');
-      modal.style.display = 'flex'; // Tampilkan flex saat diklik
+      modal.style.display = 'flex';
     }
     
     // TUTUP MODAL EDIT
     function closeEditModal() {
       const modal = document.getElementById('editGalleryModal');
       modal.classList.add('hidden');
-      modal.style.display = 'none'; // Sembunyikan total
+      modal.style.display = 'none';
     }
     
-    // 3. SIMPAN HASIL EDIT GALERI KE GOOGLE SPREADSHEET
+    // 5. SIMPAN HASIL EDIT GALERI
     async function saveGalleryEdit() {
       const rowId = document.getElementById('editRowId').value;
       const title = document.getElementById('editTitle').value;
@@ -298,9 +363,8 @@
       const caption = document.getElementById('editCaption').value;
     
       if (!title || !imageUrl) return alert('Judul dan URL Foto tidak boleh kosong!');
-    
-      // Format link Google Drive jika dimasukkan URL Drive biasa
-      //imageUrl = formatDriveUrl(imageUrl);
+
+      imageUrl = formatDriveUrl(imageUrl); 
     
       const payload = {
         action: 'editGallery',
@@ -319,13 +383,13 @@
     
         alert('Galeri Berhasil Diperbarui!');
         closeEditModal();
-        loadGalleryAdmin(); // Reload daftar galeri admin
+        loadGalleryAdmin();
       } catch (err) {
         alert('Gagal menyimpan perubahan.');
       }
     }
     
-    // 4. HAPUS FOTO GALERI
+    // 6. HAPUS FOTO GALERI
     async function deleteGallery(rowId) {
       if (!confirm('Yakin ingin menghapus foto galeri ini?')) return;
     
