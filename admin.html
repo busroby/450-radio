@@ -72,7 +72,12 @@
   <!-- MODAL EDIT FOTO GALERI (DIPERBAIKI) -->
   <div id="editGalleryModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center;">
     <div class="admin-card" style="width: 90%; max-width: 400px; background: #111b21;">
-      <h2>✏️ Edit Foto Galeri</h2>
+      <!-- <h2>✏️ Edit Foto Galeri</h2> -->
+      <h2>
+        <svg class="admin-icon" viewBox="0 0 24 24">
+                    <path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                  </svg>
+      </h2>
       <input type="hidden" id="editRowId">
       
       <label style="font-size: 0.8rem; color: var(--muted);">Judul Foto:</label>
@@ -91,7 +96,11 @@
     
     <!-- CONTAINER DAFTAR GALERI DI ADMIN DASHBOARD -->
     <div class="admin-card">
-      <h2>🖼️ Kelola & Edit Galeri</h2>
+      <!-- <h2>🖼️ Kelola & Edit Galeri</h2> -->
+      <h2>
+        <svg class="admin-icon" viewBox="0 0 24 24"><path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H9l2-3zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/></svg>
+        Kelola & Edit Galeri
+      </h2>
       <!-- Tombol Refresh Galeri -->
       <button onclick="loadGalleryAdmin()" class="btn-admin-icon">
         <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
@@ -104,7 +113,11 @@
     
     <!-- DASHBOARD KELOLA GALERI -->
     <div class="admin-card">
-      <h2>🖼️ Tambah Foto Galeri</h2>
+      <!-- <h2>🖼️ Tambah Foto Galeri</h2> -->
+      <h2>
+        <svg class="admin-icon" viewBox="0 0 24 24"><path d="M22 16V4c0-1.1-.9-2-2-2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2zm-11-4l2.03 2.71L16 11l4 5H9l2-3zM2 6v14c0 1.1.9 2 2 2h14v-2H4V6H2z"/></svg>
+        Tambah Foto Galerry
+      </h2>
       <input type="text" id="gTitle" placeholder="Judul Foto / Acara">
       <input type="text" id="gUrl" placeholder="Link Foto (Google Drive / Direct URL)">
       <textarea id="gCaption" placeholder="Keterangan singkat..."></textarea>
@@ -113,7 +126,11 @@
 
     <!-- DASHBOARD MODERASI CHAT -->
     <div class="admin-card">
-      <h2>💬 Moderasi Chat (Hapus Pesan)</h2>
+      <!-- <h2>💬 Moderasi Chat (Hapus Pesan)</h2> -->
+      <h2>
+        <svg class="admin-icon" viewBox="0 0 24 24" style="color:var(--primary)"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+        Hapus Pesan
+      </h2>
       <!-- Tombol Refresh Chat -->
       <button onclick="loadChatAdmin()" class="btn-admin-icon">
         <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
