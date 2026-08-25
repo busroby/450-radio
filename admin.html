@@ -82,6 +82,20 @@
       padding: 6px 12px;
     }
 
+    /* STYLING MODAL CONTAINER */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 2000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     .list-item {
       display: flex;
       justify-content: space-between;
@@ -105,8 +119,27 @@
   <!-- DASHBOARD ADMIN CONTAINER -->
   <div id="dashboard" class="hidden">
     
+    <!-- MODAL TAMBAH FOTO GALERI -->
+    <div id="addGalleryModal" class="modal-overlay hidden">
+      <div class="admin-card" style="width: 90%; max-width: 400px; background: #111b21;">
+        <h2>🖼️ Tambah Foto Galeri</h2>
+        
+        <label style="font-size: 0.8rem; color: var(--muted);">Judul Foto / Acara:</label>
+        <input type="text" id="gTitle" placeholder="Contoh: Liputan Acara Musik">
+        
+        <label style="font-size: 0.8rem; color: var(--muted);">URL Foto (Drive/Direct):</label>
+        <input type="text" id="gUrl" placeholder="https://...">
+        
+        <label style="font-size: 0.8rem; color: var(--muted);">Caption / Deskripsi:</label>
+        <textarea id="gCaption" rows="3" placeholder="Keterangan singkat..."></textarea>
+        
+        <button onclick="addGalleryItem()">+ Upload Ke Galeri</button>
+        <button onclick="closeAddModal()" style="background:#444; color:#fff; margin-top:0;">Batal</button>
+      </div>
+    </div>
+
     <!-- MODAL EDIT FOTO GALERI -->
-    <div id="editGalleryModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:none; justify-content:center; align-items:center;">
+    <div id="editGalleryModal" class="modal-overlay hidden">
       <div class="admin-card" style="width: 90%; max-width: 400px; background: #111b21;">
         <h2>✏️ Edit Foto Galeri</h2>
         <input type="hidden" id="editRowId">
@@ -127,42 +160,37 @@
     
     <!-- CONTAINER DAFTAR GALERI DI ADMIN DASHBOARD -->
     <div class="admin-card">
-      <h2>🖼️ Kelola & Edit Galeri</h2>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <h2 style="margin:0;">🖼️ Kelola Galeri</h2>
+        <button onclick="openAddModal()" class="btn-admin-icon" style="width:auto; padding:8px 12px; margin:0;">
+          <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+          </svg>
+          <span>Tambah Foto</span>
+        </button>
+      </div>
+
       <!-- Tombol Refresh Galeri -->
-      <button onclick="loadGalleryAdmin()" class="btn-admin-icon">
+      <button onclick="loadGalleryAdmin()" class="btn-admin-icon" style="background:#202c33; color:var(--text); border:1px solid rgba(255,255,255,0.1);">
         <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
           <path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
         </svg>
         <span>Refresh Galeri</span>
       </button>
-      <div id="galleryAdminList">Memuat foto galeri...</div>
-    </div>
-    
-    <!-- DASHBOARD KELOLA GALERI -->
-    <div class="admin-card">
-      <h2>🖼️ Tambah Foto Galeri</h2>
-      <input type="text" id="gTitle" placeholder="Judul Foto / Acara">
-      <input type="text" id="gUrl" placeholder="Link Foto (Google Drive / Direct URL)">
-      <textarea id="gCaption" placeholder="Keterangan singkat..."></textarea>
-      <button onclick="addGalleryItem()" class="btn-admin-icon">
-        <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
-          <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-        </svg>
-        <span>Upload Ke Galeri</span>
-      </button>
+
+      <div id="galleryAdminList" style="margin-top:10px;">Memuat foto galeri...</div>
     </div>
 
     <!-- DASHBOARD MODERASI CHAT -->
     <div class="admin-card">
       <h2>💬 Moderasi Chat (Hapus Pesan)</h2>
-      <!-- Tombol Refresh Chat -->
-      <button onclick="loadChatAdmin()" class="btn-admin-icon">
+      <button onclick="loadChatAdmin()" class="btn-admin-icon" style="background:#202c33; color:var(--text); border:1px solid rgba(255,255,255,0.1);">
         <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
           <path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
         </svg>
         <span>Refresh Chat</span>
       </button>
-      <div id="chatAdminList">Memuat pesan...</div>
+      <div id="chatAdminList" style="margin-top:10px;">Memuat pesan...</div>
     </div>
 
   </div>
@@ -192,7 +220,6 @@
           document.getElementById('login-box').classList.add('hidden');
           document.getElementById('dashboard').classList.remove('hidden');
           
-          // Muat data admin setelah berhasil login
           loadChatAdmin();
           loadGalleryAdmin();
         } else if (result.status === 'wrong') {
@@ -204,14 +231,31 @@
         alert('Terjadi kesalahan koneksi.');
       }
     }
+
+    /* CONTROLLER MODAL TAMBAH GALERI */
+    function openAddModal() {
+      document.getElementById('addGalleryModal').classList.remove('hidden');
+    }
+
+    function closeAddModal() {
+      document.getElementById('addGalleryModal').classList.add('hidden');
+      document.getElementById('gTitle').value = '';
+      document.getElementById('gUrl').value = '';
+      document.getElementById('gCaption').value = '';
+    }
+
+    /* CONTROLLER MODAL EDIT GALERI */
+    function openEditModal(rowId, title, url, caption) {
+      document.getElementById('editRowId').value = rowId;
+      document.getElementById('editTitle').value = title;
+      document.getElementById('editUrl').value = url;
+      document.getElementById('editCaption').value = caption;
+      
+      document.getElementById('editGalleryModal').classList.remove('hidden');
+    }
     
-    // Helper format link Google Drive
-    function formatDriveUrl(url) {
-      if (url.includes('drive.google.com')) {
-        const idMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
-        if (idMatch && idMatch[1]) return `https://lh3.googleusercontent.com/d/${idMatch[1]}`;
-      }
-      return url;
+    function closeEditModal() {
+      document.getElementById('editGalleryModal').classList.add('hidden');
     }
 
     // 1. TAMBAH FOTO GALERI
@@ -221,9 +265,9 @@
       const caption = document.getElementById('gCaption').value;
 
       if (!title || !imageUrl) return alert('Judul dan URL Foto Wajib Diisi!');
-      
+
       imageUrl = formatDriveUrl(imageUrl); 
-      
+
       const payload = {
         action: 'addGallery',
         title: title,
@@ -231,16 +275,19 @@
         caption: caption
       };
 
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify(payload)
-      });
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
 
-      alert('Foto Berhasil Ditambahkan ke Galeri!');
-      document.getElementById('gTitle').value = '';
-      document.getElementById('gUrl').value = '';
-      document.getElementById('gCaption').value = '';
-      loadGalleryAdmin();
+        alert('Foto Berhasil Ditambahkan ke Galeri!');
+        closeAddModal();
+        loadGalleryAdmin();
+      } catch (err) {
+        alert('Gagal menambah foto.');
+      }
     }
 
     // 2. LOAD & MODERASI CHAT
@@ -279,6 +326,7 @@
 
       await fetch(SCRIPT_URL, {
         method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ action: 'deleteChat', id: id })
       });
 
@@ -334,25 +382,6 @@
       } catch (err) {
         container.innerHTML = 'Gagal memuat galeri.';
       }
-    }
-
-    // BUKA MODAL EDIT
-    function openEditModal(rowId, title, url, caption) {
-      document.getElementById('editRowId').value = rowId;
-      document.getElementById('editTitle').value = title;
-      document.getElementById('editUrl').value = url;
-      document.getElementById('editCaption').value = caption;
-      
-      const modal = document.getElementById('editGalleryModal');
-      modal.classList.remove('hidden');
-      modal.style.display = 'flex';
-    }
-    
-    // TUTUP MODAL EDIT
-    function closeEditModal() {
-      const modal = document.getElementById('editGalleryModal');
-      modal.classList.add('hidden');
-      modal.style.display = 'none';
     }
     
     // 5. SIMPAN HASIL EDIT GALERI
