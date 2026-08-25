@@ -69,6 +69,33 @@
   <!-- DASHBOARD ADMIN CONTAINER -->
   <div id="dashboard" class="hidden">
     
+    <!-- MODAL EDIT FOTO GALERI -->
+    <div id="editGalleryModal" class="hidden" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:2000; display:flex; justify-content:center; align-items:center;">
+      <div class="admin-card" style="width: 90%; max-width: 400px; background: #111b21;">
+        <h2>✏️ Edit Foto Galeri</h2>
+        <input type="hidden" id="editRowId">
+        
+        <label style="font-size: 0.8rem; color: var(--muted);">Judul Foto:</label>
+        <input type="text" id="editTitle">
+        
+        <label style="font-size: 0.8rem; color: var(--muted);">URL Foto (Drive/Direct):</label>
+        <input type="text" id="editUrl">
+        
+        <label style="font-size: 0.8rem; color: var(--muted);">Caption / Deskripsi:</label>
+        <textarea id="editCaption" rows="3"></textarea>
+        
+        <button onclick="saveGalleryEdit()">Simpan Perubahan</button>
+        <button onclick="closeEditModal()" style="background:#444; color:#fff; margin-top:0;">Batal</button>
+      </div>
+    </div>
+    
+    <!-- CONTAINER DAFTAR GALERI DI ADMIN DASHBOARD -->
+    <div class="admin-card">
+      <h2>🖼️ Kelola & Edit Galeri</h2>
+      <button onclick="loadGalleryAdmin()" style="margin-bottom: 15px;">🔄 Refresh Daftar Galeri</button>
+      <div id="galleryAdminList">Memuat foto galeri...</div>
+    </div>
+    
     <!-- DASHBOARD KELOLA GALERI -->
     <div class="admin-card">
       <h2>🖼️ Tambah Foto Galeri</h2>
