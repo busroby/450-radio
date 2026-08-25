@@ -102,6 +102,21 @@
       align-items: center;
       padding: 10px;
       border-bottom: 1px solid rgba(255,255,255,0.05);
+      gap: 12px;
+    }
+    .chat-info {
+      flex: 1;
+      overflow: hidden;
+    }
+    .chat-user-code {
+      font-size: 0.75rem;
+      color: var(--primary);
+      margin-left: 6px;
+    }
+    .chat-msg {
+      font-size: 0.9rem;
+      margin-top: 4px;
+      word-break: break-word;
     }
     #login-box { max-width: 360px; margin: 80px auto; text-align: center; }
     .hidden { display: none !important; }
@@ -163,7 +178,7 @@
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
         <h2 style="margin:0;">🖼️ Kelola Galeri</h2>
         <button onclick="openAddModal()" class="btn-admin-icon" style="width:auto; padding:8px 12px; margin:0;">
-          <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
             <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
           </svg>
           <span>Tambah Foto</span>
@@ -172,7 +187,7 @@
 
       <!-- Tombol Refresh Galeri -->
       <button onclick="loadGalleryAdmin()" class="btn-admin-icon" style="background:#202c33; color:var(--text); border:1px solid rgba(255,255,255,0.1);">
-        <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+        <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
           <path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
         </svg>
         <span>Refresh Galeri</span>
@@ -185,7 +200,7 @@
     <div class="admin-card">
       <h2>💬 Moderasi Chat (Hapus Pesan)</h2>
       <button onclick="loadChatAdmin()" class="btn-admin-icon" style="background:#202c33; color:var(--text); border:1px solid rgba(255,255,255,0.1);">
-        <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+        <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
           <path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
         </svg>
         <span>Refresh Chat</span>
@@ -197,6 +212,16 @@
 
   <script>
     const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby_O1fa98OjJqmah-AvmIRU_IrZOK7Yi6eH_7PBP9QJTjz_MwEeyB_wWN350u2Tey35/exec';
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
 
     async function checkPin() {
       const pinInput = document.getElementById('pinInput').value;
@@ -232,7 +257,6 @@
       }
     }
 
-    // Helper format link Google Drive agar bisa langsung tampil sebagai gambar
     function formatDriveUrl(url) {
       if (!url) return '';
       if (url.includes('drive.google.com')) {
@@ -244,7 +268,7 @@
       return url;
     }
 
-    /* CONTROLLER MODAL TAMBAH GALERI */
+    /* CONTROLLER MODAL GALERI */
     function openAddModal() {
       document.getElementById('addGalleryModal').classList.remove('hidden');
     }
@@ -256,7 +280,6 @@
       document.getElementById('gCaption').value = '';
     }
 
-    /* CONTROLLER MODAL EDIT GALERI */
     function openEditModal(rowId, title, url, caption) {
       document.getElementById('editRowId').value = rowId;
       document.getElementById('editTitle').value = title;
@@ -270,7 +293,7 @@
       document.getElementById('editGalleryModal').classList.add('hidden');
     }
 
-    // 1. TAMBAH FOTO GALERI
+    /* GALERI FUNCTIONS */
     async function addGalleryItem() {
       const title = document.getElementById('gTitle').value;
       let rawUrl = document.getElementById('gUrl').value;
@@ -278,7 +301,6 @@
 
       if (!title || !rawUrl) return alert('Judul dan URL Foto Wajib Diisi!');
 
-      // Format URL Google Drive secara otomatis
       const imageUrl = formatDriveUrl(rawUrl);
 
       const payload = {
@@ -303,51 +325,6 @@
       }
     }
 
-    // 2. LOAD & MODERASI CHAT
-    async function loadChatAdmin() {
-      const container = document.getElementById('chatAdminList');
-      container.innerHTML = 'Memuat...';
-
-      try {
-        const res = await fetch(SCRIPT_URL);
-        const data = await res.json();
-        
-        container.innerHTML = '';
-        data.reverse().forEach(item => {
-          container.innerHTML += `
-            <div class="list-item">
-              <div>
-                <strong>${item.nama}</strong>: ${item.pesan}
-              </div>
-              <button class="btn-danger btn-admin-icon" onclick="deleteChat(${item.id})">
-                <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
-                  <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                </svg>
-                <span>Hapus</span>
-              </button>
-            </div>
-          `;
-        });
-      } catch (err) {
-        container.innerHTML = 'Gagal memuat pesan chat.';
-      }
-    }
-
-    // 3. HAPUS CHAT
-    async function deleteChat(id) {
-      if (!confirm('Yakin ingin menghapus pesan ini?')) return;
-
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: 'deleteChat', id: id })
-      });
-
-      alert('Pesan dihapus!');
-      loadChatAdmin();
-    }
-
-    // 4. LOAD DAFTAR FOTO GALERI DI ADMIN
     async function loadGalleryAdmin() {
       const container = document.getElementById('galleryAdminList');
       container.innerHTML = 'Memuat...';
@@ -363,27 +340,27 @@
         }
     
         data.forEach(item => {
-          const safeTitle = (item.title || '').replace(/'/g, "\\'");
-          const safeCaption = (item.caption || '').replace(/'/g, "\\'");
-          const safeUrl = (item.imageUrl || '').replace(/'/g, "\\'");
+          const safeTitle = escapeHtml(item.title || '');
+          const safeCaption = escapeHtml(item.caption || '');
+          const safeUrl = escapeHtml(item.imageUrl || '');
     
           container.innerHTML += `
-            <div class="list-item" style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-              <img src="${item.imageUrl}" style="width:50px; height:50px; object-fit:cover; border-radius:6px;">
+            <div class="list-item">
+              <img src="${safeUrl}" style="width:50px; height:50px; object-fit:cover; border-radius:6px;">
               <div style="flex:1; overflow:hidden;">
-                <strong style="font-size:0.9rem; display:block; text-overflow:ellipsis; white-space:nowrap; overflow:hidden;">${item.title}</strong>
-                <small style="color:var(--muted)">${item.caption || '-'}</small>
+                <strong style="font-size:0.9rem; display:block; text-overflow:ellipsis; white-space:nowrap; overflow:hidden;">${safeTitle}</strong>
+                <small style="color:var(--muted)">${safeCaption || '-'}</small>
               </div>
               <div style="display:flex; gap:5px;">
                 <button class="btn-warning btn-admin-icon" style="font-size:0.75rem;" 
-                  onclick="openEditModal(${item.id}, '${safeTitle}', '${safeUrl}', '${safeCaption}')">
-                  <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                  onclick="openEditModal('${item.id}', '${safeTitle}', '${safeUrl}', '${safeCaption}')">
+                  <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
                     <path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
                   </svg>
                   <span>Edit</span>
                 </button>
-                <button class="btn-danger btn-admin-icon" style="font-size:0.75rem;" onclick="deleteGallery(${item.id})">
-                  <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
+                <button class="btn-danger btn-admin-icon" style="font-size:0.75rem;" onclick="deleteGallery('${item.id}')">
+                  <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
                     <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
                   </svg>
                   <span>Hapus</span>
@@ -396,8 +373,7 @@
         container.innerHTML = 'Gagal memuat galeri.';
       }
     }
-    
-    // 5. SIMPAN HASIL EDIT GALERI
+
     async function saveGalleryEdit() {
       const rowId = document.getElementById('editRowId').value;
       const title = document.getElementById('editTitle').value;
@@ -406,7 +382,6 @@
     
       if (!title || !rawUrl) return alert('Judul dan URL Foto tidak boleh kosong!');
     
-      // Format URL Google Drive secara otomatis saat edit
       const imageUrl = formatDriveUrl(rawUrl);
 
       const payload = {
@@ -431,8 +406,7 @@
         alert('Gagal menyimpan perubahan.');
       }
     }
-    
-    // 6. HAPUS FOTO GALERI
+
     async function deleteGallery(rowId) {
       if (!confirm('Yakin ingin menghapus foto galeri ini?')) return;
     
@@ -441,14 +415,88 @@
         rowId: rowId
       };
     
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify(payload)
-      });
-      
-      alert('Foto dihapus!');
-      loadGalleryAdmin();
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        alert('Foto dihapus!');
+        loadGalleryAdmin();
+      } catch(e) {
+        alert('Gagal menghapus foto.');
+      }
+    }
+
+    /* MODERASI CHAT / HAPUS KOMENTAR */
+    async function loadChatAdmin() {
+      const container = document.getElementById('chatAdminList');
+      container.innerHTML = 'Memuat...';
+
+      try {
+        const res = await fetch(SCRIPT_URL);
+        const data = await res.json();
+        
+        container.innerHTML = '';
+        if (!data || data.length === 0) {
+          container.innerHTML = '<p style="color:var(--muted)">Belum ada pesan chat.</p>';
+          return;
+        }
+
+        // Tampilkan pesan dari yang terbaru
+        data.reverse().forEach(item => {
+          const safeNama = escapeHtml(item.nama);
+          const safePesan = escapeHtml(item.pesan);
+          const safeUserCode = escapeHtml(item.userCode || '');
+          const idStr = String(item.id);
+
+          container.innerHTML += `
+            <div class="list-item">
+              <div class="chat-info">
+                <div>
+                  <strong style="color:var(--text);">${safeNama}</strong>
+                  <span class="chat-user-code">${safeUserCode}</span>
+                </div>
+                <div class="chat-msg">${safePesan}</div>
+              </div>
+              <button class="btn-danger btn-admin-icon" style="font-size:0.75rem;" onclick="deleteChat('${idStr}', this)">
+                <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                </svg>
+                <span>Hapus</span>
+              </button>
+            </div>
+          `;
+        });
+      } catch (err) {
+        container.innerHTML = 'Gagal memuat pesan chat.';
+      }
+    }
+
+    async function deleteChat(id, btnElem) {
+      if (!confirm('Yakin ingin menghapus pesan ini?')) return;
+
+      if (btnElem) {
+        btnElem.disabled = true;
+        btnElem.querySelector('span').innerText = 'Hapus...';
+      }
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'deleteChat', id: id, rowId: id })
+        });
+
+        alert('Pesan berhasil dihapus!');
+        loadChatAdmin();
+      } catch (err) {
+        alert('Gagal menghapus pesan.');
+        if (btnElem) {
+          btnElem.disabled = false;
+          btnElem.querySelector('span').innerText = 'Hapus';
+        }
+      }
     }
   </script>
 </body>
