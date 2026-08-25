@@ -47,7 +47,6 @@
       border: none;
     }
 
-    /* BROWSER COMPATIBLE SVG STYLING */
     svg.admin-icon {
       width: 16px !important;
       height: 16px !important;
@@ -75,27 +74,6 @@
       padding: 6px 12px; 
     }
 
-    .btn-warning {
-      background: var(--warning);
-      color: #000;
-      width: auto;
-      padding: 6px 12px;
-    }
-
-    /* STYLING MODAL CONTAINER */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.85);
-      z-index: 2000;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
     .list-item {
       display: flex;
       justify-content: space-between;
@@ -111,6 +89,14 @@
     .chat-user-code {
       font-size: 0.75rem;
       color: var(--primary);
+      margin-left: 6px;
+    }
+    .chat-reply-badge {
+      font-size: 0.7rem;
+      background: rgba(226, 160, 63, 0.2);
+      color: var(--warning);
+      padding: 2px 6px;
+      border-radius: 4px;
       margin-left: 6px;
     }
     .chat-msg {
@@ -133,72 +119,9 @@
 
   <!-- DASHBOARD ADMIN CONTAINER -->
   <div id="dashboard" class="hidden">
-    
-    <!-- MODAL TAMBAH FOTO GALERI -->
-    <div id="addGalleryModal" class="modal-overlay hidden">
-      <div class="admin-card" style="width: 90%; max-width: 400px; background: #111b21;">
-        <h2>🖼️ Tambah Foto Galeri</h2>
-        
-        <label style="font-size: 0.8rem; color: var(--muted);">Judul Foto / Acara:</label>
-        <input type="text" id="gTitle" placeholder="Contoh: Liputan Acara Musik">
-        
-        <label style="font-size: 0.8rem; color: var(--muted);">URL Foto (Drive/Direct):</label>
-        <input type="text" id="gUrl" placeholder="https://...">
-        
-        <label style="font-size: 0.8rem; color: var(--muted);">Caption / Deskripsi:</label>
-        <textarea id="gCaption" rows="3" placeholder="Keterangan singkat..."></textarea>
-        
-        <button onclick="addGalleryItem()">+ Upload Ke Galeri</button>
-        <button onclick="closeAddModal()" style="background:#444; color:#fff; margin-top:0;">Batal</button>
-      </div>
-    </div>
-
-    <!-- MODAL EDIT FOTO GALERI -->
-    <div id="editGalleryModal" class="modal-overlay hidden">
-      <div class="admin-card" style="width: 90%; max-width: 400px; background: #111b21;">
-        <h2>✏️ Edit Foto Galeri</h2>
-        <input type="hidden" id="editRowId">
-        
-        <label style="font-size: 0.8rem; color: var(--muted);">Judul Foto:</label>
-        <input type="text" id="editTitle">
-        
-        <label style="font-size: 0.8rem; color: var(--muted);">URL Foto (Drive/Direct):</label>
-        <input type="text" id="editUrl">
-        
-        <label style="font-size: 0.8rem; color: var(--muted);">Caption / Deskripsi:</label>
-        <textarea id="editCaption" rows="3"></textarea>
-        
-        <button onclick="saveGalleryEdit()">Simpan Perubahan</button>
-        <button onclick="closeEditModal()" style="background:#444; color:#fff; margin-top:0;">Batal</button>
-      </div>
-    </div>
-    
-    <!-- CONTAINER DAFTAR GALERI DI ADMIN DASHBOARD -->
-    <div class="admin-card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-        <h2 style="margin:0;">🖼️ Kelola Galeri</h2>
-        <button onclick="openAddModal()" class="btn-admin-icon" style="width:auto; padding:8px 12px; margin:0;">
-          <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-            <path fill="currentColor" d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-          </svg>
-          <span>Tambah Foto</span>
-        </button>
-      </div>
-
-      <!-- Tombol Refresh Galeri -->
-      <button onclick="loadGalleryAdmin()" class="btn-admin-icon" style="background:#202c33; color:var(--text); border:1px solid rgba(255,255,255,0.1);">
-        <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-          <path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
-        </svg>
-        <span>Refresh Galeri</span>
-      </button>
-
-      <div id="galleryAdminList" style="margin-top:10px;">Memuat foto galeri...</div>
-    </div>
-
     <!-- DASHBOARD MODERASI CHAT -->
     <div class="admin-card">
-      <h2>💬 Moderasi Chat (Hapus Pesan)</h2>
+      <h2>💬 Moderasi Chat (Hapus Pesan & Balasan)</h2>
       <button onclick="loadChatAdmin()" class="btn-admin-icon" style="background:#202c33; color:var(--text); border:1px solid rgba(255,255,255,0.1);">
         <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
           <path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
@@ -207,7 +130,6 @@
       </button>
       <div id="chatAdminList" style="margin-top:10px;">Memuat pesan...</div>
     </div>
-
   </div>
 
   <script>
@@ -227,208 +149,27 @@
       const pinInput = document.getElementById('pinInput').value;
       if (!pinInput) return alert('Masukkan PIN Admin!');
     
-      const payload = {
-        action: 'checkPassword',
-        password: pinInput
-      };
-    
       try {
         const res = await fetch(SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
+          body: JSON.stringify({ action: 'checkPassword', password: pinInput })
         });
     
         const result = await res.json();
-    
         if (result.status === 'success') {
           document.getElementById('login-box').classList.add('hidden');
           document.getElementById('dashboard').classList.remove('hidden');
-          
           loadChatAdmin();
-          loadGalleryAdmin();
-        } else if (result.status === 'wrong') {
-          alert('PIN Admin Salah!');
         } else {
-          alert(result.message || 'Gagal terhubung ke server.');
+          alert('PIN Admin Salah!');
         }
       } catch (err) {
         alert('Terjadi kesalahan koneksi.');
       }
     }
 
-    function formatDriveUrl(url) {
-      if (!url) return '';
-      if (url.includes('drive.google.com')) {
-        const idMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
-        if (idMatch && idMatch[1]) {
-          return `https://lh3.googleusercontent.com/d/${idMatch[1]}`;
-        }
-      }
-      return url;
-    }
-
-    /* CONTROLLER MODAL GALERI */
-    function openAddModal() {
-      document.getElementById('addGalleryModal').classList.remove('hidden');
-    }
-
-    function closeAddModal() {
-      document.getElementById('addGalleryModal').classList.add('hidden');
-      document.getElementById('gTitle').value = '';
-      document.getElementById('gUrl').value = '';
-      document.getElementById('gCaption').value = '';
-    }
-
-    function openEditModal(rowId, title, url, caption) {
-      document.getElementById('editRowId').value = rowId;
-      document.getElementById('editTitle').value = title;
-      document.getElementById('editUrl').value = url;
-      document.getElementById('editCaption').value = caption;
-      
-      document.getElementById('editGalleryModal').classList.remove('hidden');
-    }
-    
-    function closeEditModal() {
-      document.getElementById('editGalleryModal').classList.add('hidden');
-    }
-
-    /* GALERI FUNCTIONS */
-    async function addGalleryItem() {
-      const title = document.getElementById('gTitle').value;
-      let rawUrl = document.getElementById('gUrl').value;
-      const caption = document.getElementById('gCaption').value;
-
-      if (!title || !rawUrl) return alert('Judul dan URL Foto Wajib Diisi!');
-
-      const imageUrl = formatDriveUrl(rawUrl);
-
-      const payload = {
-        action: 'addGallery',
-        title: title,
-        imageUrl: imageUrl,
-        caption: caption
-      };
-
-      try {
-        await fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-
-        alert('Foto Berhasil Ditambahkan ke Galeri!');
-        closeAddModal();
-        loadGalleryAdmin();
-      } catch (err) {
-        alert('Gagal menambah foto.');
-      }
-    }
-
-    async function loadGalleryAdmin() {
-      const container = document.getElementById('galleryAdminList');
-      container.innerHTML = 'Memuat...';
-    
-      try {
-        const res = await fetch(SCRIPT_URL + '?action=gallery');
-        const data = await res.json();
-        
-        container.innerHTML = '';
-        if(!data || data.length === 0) {
-          container.innerHTML = '<p style="color:var(--muted)">Belum ada foto di galeri.</p>';
-          return;
-        }
-    
-        data.forEach(item => {
-          const safeTitle = escapeHtml(item.title || '');
-          const safeCaption = escapeHtml(item.caption || '');
-          const safeUrl = escapeHtml(item.imageUrl || '');
-    
-          container.innerHTML += `
-            <div class="list-item">
-              <img src="${safeUrl}" style="width:50px; height:50px; object-fit:cover; border-radius:6px;">
-              <div style="flex:1; overflow:hidden;">
-                <strong style="font-size:0.9rem; display:block; text-overflow:ellipsis; white-space:nowrap; overflow:hidden;">${safeTitle}</strong>
-                <small style="color:var(--muted)">${safeCaption || '-'}</small>
-              </div>
-              <div style="display:flex; gap:5px;">
-                <button class="btn-warning btn-admin-icon" style="font-size:0.75rem;" 
-                  onclick="openEditModal('${item.id}', '${safeTitle}', '${safeUrl}', '${safeCaption}')">
-                  <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                  </svg>
-                  <span>Edit</span>
-                </button>
-                <button class="btn-danger btn-admin-icon" style="font-size:0.75rem;" onclick="deleteGallery('${item.id}')">
-                  <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
-                    <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
-                  </svg>
-                  <span>Hapus</span>
-                </button>
-              </div>
-            </div>
-          `;
-        });
-      } catch (err) {
-        container.innerHTML = 'Gagal memuat galeri.';
-      }
-    }
-
-    async function saveGalleryEdit() {
-      const rowId = document.getElementById('editRowId').value;
-      const title = document.getElementById('editTitle').value;
-      let rawUrl = document.getElementById('editUrl').value;
-      const caption = document.getElementById('editCaption').value;
-    
-      if (!title || !rawUrl) return alert('Judul dan URL Foto tidak boleh kosong!');
-    
-      const imageUrl = formatDriveUrl(rawUrl);
-
-      const payload = {
-        action: 'editGallery',
-        rowId: rowId,
-        title: title,
-        imageUrl: imageUrl,
-        caption: caption
-      };
-    
-      try {
-        await fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-    
-        alert('Galeri Berhasil Diperbarui!');
-        closeEditModal();
-        loadGalleryAdmin();
-      } catch (err) {
-        alert('Gagal menyimpan perubahan.');
-      }
-    }
-
-    async function deleteGallery(rowId) {
-      if (!confirm('Yakin ingin menghapus foto galeri ini?')) return;
-    
-      const payload = {
-        action: 'deleteGallery',
-        rowId: rowId
-      };
-    
-      try {
-        await fetch(SCRIPT_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: JSON.stringify(payload)
-        });
-        alert('Foto dihapus!');
-        loadGalleryAdmin();
-      } catch(e) {
-        alert('Gagal menghapus foto.');
-      }
-    }
-
-    /* MODERASI CHAT / HAPUS KOMENTAR */
+    /* MODERASI CHAT / HAPUS KOMENTAR & BALASAN */
     async function loadChatAdmin() {
       const container = document.getElementById('chatAdminList');
       container.innerHTML = 'Memuat...';
@@ -449,6 +190,9 @@
           const safePesan = escapeHtml(item.pesan);
           const safeUserCode = escapeHtml(item.userCode || '');
           const idStr = String(item.id);
+          const parentIdStr = item.parentId ? String(item.parentId) : '';
+
+          const replyBadge = parentIdStr ? `<span class="chat-reply-badge">Balasan (Parent ID: ${escapeHtml(parentIdStr)})</span>` : '';
 
           container.innerHTML += `
             <div class="list-item">
@@ -456,6 +200,7 @@
                 <div>
                   <strong style="color:var(--text);">${safeNama}</strong>
                   <span class="chat-user-code">${safeUserCode}</span>
+                  ${replyBadge}
                 </div>
                 <div class="chat-msg">${safePesan}</div>
               </div>
@@ -474,24 +219,30 @@
     }
 
     async function deleteChat(id, btnElem) {
-      if (!confirm('Yakin ingin menghapus pesan ini?')) return;
+      if (!confirm('Yakin ingin menghapus pesan ini beserta SELURUH balasan terkait?')) return;
 
       if (btnElem) {
         btnElem.disabled = true;
-        btnElem.querySelector('span').innerText = 'Hapus...';
+        btnElem.querySelector('span').innerText = 'Menghapus...';
       }
 
       try {
-        await fetch(SCRIPT_URL, {
+        const res = await fetch(SCRIPT_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify({ action: 'deleteChat', id: id, rowId: id })
         });
 
-        alert('Pesan berhasil dihapus!');
-        loadChatAdmin();
+        const result = await res.json();
+        if (result.status === 'success') {
+          alert(result.message || 'Pesan dan balasan berhasil dihapus!');
+          loadChatAdmin();
+        } else {
+          alert('Gagal: ' + (result.message || 'Terjadi kesalahan.'));
+        }
       } catch (err) {
         alert('Gagal menghapus pesan.');
+      } finally {
         if (btnElem) {
           btnElem.disabled = false;
           btnElem.querySelector('span').innerText = 'Hapus';
