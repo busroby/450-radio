@@ -303,38 +303,85 @@
       }
     }
 
-    // 2. LOAD & MODERASI CHAT
+    /* MODERASI CHAT / HAPUS KOMENTAR & BALASAN */
     async function loadChatAdmin() {
       const container = document.getElementById('chatAdminList');
       container.innerHTML = 'Memuat...';
 
-      const res = await fetch(SCRIPT_URL);
-      const data = await res.json();
+      try {
+        const res = await fetch(SCRIPT_URL);
+        const data = await res.json();
 
-      container.innerHTML = '';
-      data.reverse().forEach(item => {
-        container.innerHTML += `
-          <div class="list-item">
-            <div>
-              <strong>${item.nama}</strong>: ${item.pesan}
+        container.innerHTML = '';
+        if (!data || data.length === 0) {
+          container.innerHTML = '<p style="color:var(--muted)">Belum ada pesan chat.</p>';
+          return;
+        }
+
+        // Tampilkan pesan dari yang terbaru
+        data.reverse().forEach(item => {
+          const safeNama = escapeHtml(item.nama);
+          const safePesan = escapeHtml(item.pesan);
+          const safeUserCode = escapeHtml(item.userCode || '');
+          const idStr = String(item.id);
+          const parentIdStr = item.parentId ? String(item.parentId) : '';
+
+          const replyBadge = parentIdStr ? `<span class="chat-reply-badge">Balasan (Parent ID: ${escapeHtml(parentIdStr)})</span>` : '';
+
+          container.innerHTML += `
+            <div class="list-item">
+              <div class="chat-info">
+                <div>
+                  <strong style="color:var(--text);">${safeNama}</strong>
+                  <span class="chat-user-code">${safeUserCode}</span>
+                  ${replyBadge}
+                </div>
+                <div class="chat-msg">${safePesan}</div>
+              </div>
+              <button class="btn-danger btn-admin-icon" style="font-size:0.75rem;" onclick="deleteChat('${idStr}', this)">
+                <svg class="admin-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="currentColor" d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                </svg>
+                <span>Hapus</span>
+              </button>
             </div>
-            <button class="btn-danger" onclick="deleteChat(${item.id})">Hapus</button>
-          </div>
-        `;
-      });
+          `;
+        });
+      } catch (err) {
+        container.innerHTML = 'Gagal memuat pesan chat.';
+      }
     }
 
-    // 3. HAPUS CHAT
-    async function deleteChat(id) {
-      if (!confirm('Yakin ingin menghapus pesan ini?')) return;
+    async function deleteChat(id, btnElem) {
+      if (!confirm('Yakin ingin menghapus pesan ini beserta SELURUH balasan terkait?')) return;
 
-      await fetch(SCRIPT_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: 'deleteChat', id: id })
-      });
+      if (btnElem) {
+        btnElem.disabled = true;
+        btnElem.querySelector('span').innerText = 'Menghapus...';
+      }
 
-      alert('Pesan dihapus!');
-      loadChatAdmin();
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'deleteChat', id: id, rowId: id })
+        });
+
+        const result = await res.json();
+        if (result.status === 'success') {
+          alert(result.message || 'Pesan dan balasan berhasil dihapus!');
+          loadChatAdmin();
+        } else {
+          alert('Gagal: ' + (result.message || 'Terjadi kesalahan.'));
+        }
+      } catch (err) {
+        alert('Gagal menghapus pesan.');
+      } finally {
+        if (btnElem) {
+          btnElem.disabled = false;
+          btnElem.querySelector('span').innerText = 'Hapus';
+        }
+      }
     }
 
     // 4. LOAD DAFTAR FOTO GALERI DI ADMIN
