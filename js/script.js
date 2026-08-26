@@ -2,7 +2,7 @@
 // KONFIGURASI & DEKLARASI ELEMEN DOM
 // ==========================================
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby_O1fa98OjJqmah-AvmIRU_IrZOK7Yi6eH_7PBP9QJTjz_MwEeyB_wWN350u2Tey35/exec';
-const streamUrl = "https://radio.pelajarjurnalis.or.id/radio/;";
+const streamUrl = "https://radio.pelajarjurnalis.or.id/play";
 
 // Elemen Form & Komentar
 const commentForm = document.getElementById('commentForm');
