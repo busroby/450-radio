@@ -22,7 +22,7 @@
 
 
     // GANTI dengan tautan streaming Nginx/Icecast audio Anda
-    const streamUrl = "https://radio.pelajarjurnalis.or.id/listen";
+    const streamUrl = "https://radio.pelajarjurnalis.or.id/play";
 
     const playBtn = document.getElementById('playBtn');
     const playIcon = document.getElementById('playIcon');
